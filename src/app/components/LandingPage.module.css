@@ -1,0 +1,142 @@
+/* LandingPage.module.css */
+
+.nav {
+    display: none;
+}
+
+.img {
+    width: 10vw;
+}
+
+.header {
+    display: flex;
+    background-color: black;
+    position: fixed;
+    top: 0; /* Garante que o cabeçalho fique no topo */
+    width: 100%; /* Garante que o cabeçalho ocupe toda a largura da página */
+    z-index: 1000; /* Garante que o cabeçalho fique acima do conteúdo */
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: center;
+    padding-top: 60px; /* Espaço para o cabeçalho fixo */
+}
+
+.section {
+    width: 80%; /* Ajusta conforme necessário */
+    text-align: center; /* Centraliza o texto */
+    margin: 20px 0; /* Espaçamento entre seções */
+}
+
+.h2 {
+    color: #333333;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 2rem;
+}
+
+.p {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #333333;
+    text-align: left;
+}
+
+.button {
+    background-color: #004080;
+    padding: 0.5rem;
+    width: 80vw; /* Ajustado para ser consistente */
+    color: white;
+    border: 0;
+    border-radius: 8px;
+}
+
+.h3 {
+    color: #333333;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-weight: 500;
+    font-size: 2rem;
+    margin-top: 3rem;
+    text-align: left;
+}
+
+@media screen and (min-width: 700px) {
+    .nav {
+        display: block;
+    }
+
+    .header {
+        display: flex;
+        justify-content: center;
+        align-items: center; /* Adiciona alinhamento vertical ao centro */
+        background-color: black;
+    }
+
+    .navContainer nav {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100vw;
+        color: white;
+        padding: 2rem;
+    }
+
+    .ul {
+        list-style-type: none;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .img {
+        width: 5vw;
+    }
+
+    .button {
+        background-color: #ffffff;
+        padding: 0.5rem;
+        width: 10vw;
+        color: hsl(0, 0%, 20%);
+        border: 0;
+        cursor: pointer;
+    }
+
+    .button:hover,
+    .button:focus {
+        background-color: #333333;
+        color: #ffffff;
+        outline: none; /* Remove a borda padrão do foco */
+    }
+
+    .h2 {
+        color: #333333;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        font-weight: 500;
+        font-size: 2rem;
+    }
+
+    .contato {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .main {
+        margin-top: 5rem;
+    }
+
+    .link {
+        color: #ffffff;
+        text-decoration: none;
+        font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+        font-weight: 400;
+    }
+
+    .li a {
+        color: white;
+    }
+}
