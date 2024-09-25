@@ -1,0 +1,19 @@
+.HeaderSidebar{
+    width: 100vw;
+    /* background-color: #2980B9; */
+    background-color: white;
+    position: fixed;
+    top: 0;
+    z-index: -1;
+    border-bottom: 0.5px solid rgb(230, 227, 227);
+
+    padding: 1rem;
+    display: flex;
+    justify-content: right;
+}
+.iconContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 10vw;
+}
