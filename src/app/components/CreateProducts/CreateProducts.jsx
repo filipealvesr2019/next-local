@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useConfig } from '../../../context/ConfigContext';
 import Cookies from "js-cookie";
+import { useConfig } from '../../../../context/ConfigContext';
 
 export default function Products() {
   const { apiUrl } = useConfig();

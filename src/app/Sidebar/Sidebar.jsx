@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import styles from "./Sidebar.module.css";
@@ -8,12 +9,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { adminAuth } from "../../../context/AdminAuthProvider";
 import PIX from "../Payments/PIX";
 
-import StoreContainer from "./container/storeContainer";
-import Home from "./Home/Home";
-import Email from "./Email/Email";
-import Finaceiro from "./Finaceiro/Finaceiro";
+
+// import Email from "./Email/Email";
+
 import Products from "../Products/Products";
 import Link from "next/link";
+import StoreContainer from "../components/container/storeContainer";
+import Home from "../page";
+import Finaceiro from "../components/Finaceiro/Finaceiro";
 
 const HomeIcon = () => (
   <svg className={styles.icon} viewBox="0 0 20 20" fill="currentColor">
@@ -132,10 +135,10 @@ const Sidebar = () => {
           {openCartModal && (
             <div className={styles.cartModal}>
               <div ref={modalRef} className={styles.cartModalContent}>
-                <Link to={"/looks"}>
+                <Link href={"/looks"}>
                   <span className={styles.span}>Aparência da Loja</span>
                 </Link>
-                <Link to={"/temas"}>
+                <Link href={"/temas"}>
 
                 <span className={styles.span}>Temas</span>
                 </Link>
@@ -183,7 +186,7 @@ const Sidebar = () => {
           
           {content === "Pagamentos" && <PIX />}
           {content === "Pedidos" && <StoreContainer />}
-          {content === "Email" && <Email />}
+          {/* {content === "Email" && <Email />} */}
           {content === "Finaceiro" && <Finaceiro />}
           {content === "Relatório" && <Finaceiro />}
 

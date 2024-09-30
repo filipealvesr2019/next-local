@@ -1,0 +1,23 @@
+.received {
+  color: #239b22;
+  font-weight: 600;
+  cursor: pointer;
+  /* background-color: #E9F8E9; */
+}
+.pending {
+  /* background-color: #FFF5E7; */
+  font-weight: 600;
+  color: #d69d52;
+  width: 10vw;
+  cursor: pointer;
+}
+
+
+.typeReceita{
+  color: #239B22;
+  font-weight: 600;
+}
+.typeDespesa{
+  color: #c0392b;
+  font-weight: 600;
+}

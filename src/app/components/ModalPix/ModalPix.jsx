@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormLabel, Input, useDisclosure } from '@chakra-ui/react';
 import Cookies from "js-cookie";
 import axios from 'axios';
-import { useConfig } from '../../../context/ConfigContext';
+import { useConfig } from '../../../../context/ConfigContext';
 
 export default function InitialFocus() {
   const { isOpen, onOpen, onClose } = useDisclosure();

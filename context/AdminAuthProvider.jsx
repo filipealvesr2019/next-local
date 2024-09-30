@@ -1,3 +1,4 @@
+"use client"
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -6,7 +7,7 @@ import { isAdminAtom, loggedInAtom, authErrorAtom, AdminIDAtom } from '../store/
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const adminAuthProvider  = ({ children }) => {
+const AdminAuthProvider  = ({ children }) => {
   const [loggedIn, setLoggedIn] = useAtom(loggedInAtom);
   const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
   const [adminID, setAdminID] = useAtom(AdminIDAtom); // Adicione o estado para customerID
@@ -25,7 +26,7 @@ const adminAuthProvider  = ({ children }) => {
   return <>{children}</>;
 };
 
-export default adminAuthProvider ;
+export default AdminAuthProvider ;
 
 export const adminAuth = () => {
   const [loggedIn, setLoggedIn] = useAtom(loggedInAtom);
@@ -54,7 +55,7 @@ export const adminAuth = () => {
       setError(error.response.data.error);
 
       if (error.response && error.response.status === 401) {
-        toast.error('Erro, email ou senha inválidos!', { position: toast.POSITION.TOP_CENTER });
+        toast.error('Erro, email ou senha inválidos!', { position: 'top-center' });
       } else {
         console.error('Erro na solicitação de login', error);
       }

@@ -1,0 +1,118 @@
+
+
+.SidebarContainer{
+    display: none;
+  }
+  @media screen and (min-width: 700px) {
+    .iconContainer {
+      display: flex;
+      flex-direction: row;
+    }
+    .SidebarContainer {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      position: fixed;
+      left: 0;
+      z-index: 7; /* Este valor de z-index deve ser maior que o do header */
+    }
+    
+    .HeaderSidebar {
+      position: fixed;
+      top: 0;
+      z-index: 5; /* Certifique-se de que este valor seja menor que o da sidebar */
+    }
+    
+    .sidebar {
+      width: 24vw;
+      height: 100vh;
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      border-right: 0.5px solid rgb(230, 227, 227);
+      box-shadow: rgba(100, 100, 111, 0.1) 0px 7px 29px 0px;
+      z-index: 10; /* Adicione um z-index maior para garantir que a sidebar fique sobreposta */
+    }
+    
+    .sidebarItem {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      color: gray;
+      cursor: pointer;
+      width: 100%;
+    }
+    
+    .sidebarItem:hover,
+    .sidebarItem.active {
+      background-color: #EFEFEF;
+      border-radius: 4px;
+      color: black;
+    }
+    
+    .sidebarItem:hover .icon,
+    .sidebarItem.active .icon,
+    .sidebarItem:hover .itemText,
+    .sidebarItem.active .itemText {
+      color: black;
+    }
+    
+    .icon {
+      margin-right: 15px;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: gray; /* Cor padrão dos ícones */
+    }
+    
+    .itemText {
+      font-size: 1.2rem;
+      color: gray; /* Cor padrão do texto */
+  
+      font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+      font-weight: 400;
+  
+    }
+    
+    .content {
+      display: flex;
+      justify-content: center;
+      width: 100vw;
+      background-color: #F4F4F4;
+      overflow-y: auto; /* Permitir rolagem vertical */
+      height: 100vh; /* Garante que o conteúdo tenha a altura total da viewport */
+    }
+    
+    .icon {
+      margin: 1rem;
+      display: flex;
+      flex-direction: row;
+    }
+    .itemIcons{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 15vw;
+  
+    }
+    
+    .cartModalContent{
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+  
+      text-align: center;
+    }
+    .span{
+      padding: 0.5rem;
+    }
+    .span:hover{
+      background-color: #EFEFEF;
+    }
+    .logo{
+      margin-bottom: 2rem;
+      padding: 1rem;
+    }
+  }
+  
