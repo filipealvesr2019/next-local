@@ -1,10 +1,10 @@
 import Cookies from "js-cookie";
-import { useConfig } from "../../../context/ConfigContext";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 import CreateProductsModal from "../components/CreateProducts/CreateProductsModal/CreateProductsModal";
 import Link from "next/link";
+import { useConfig } from "../../../context/ConfigContext";
 export default function Products() {
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
 
@@ -47,7 +47,7 @@ export default function Products() {
         </div>
         {data.length > 0 ? (
           data.map((product) => (
-            <Link to={`/user/product/${product._id}`}>
+            <Link href={`/user/product/${product._id}`}>
               <div key={product._id} style={{ marginTop: "10rem",  }}>
                 {product.name}
                 <img

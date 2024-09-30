@@ -1,21 +1,25 @@
-// ConfigContext.js
-import React, { createContext, useState } from 'react';
-const localhost = 'http://localhost:3002'
-const apiUrl = 'https://64f22388c1f395658e3d59cd7fc11988.serveo.net';
+"use client"; // Adicione isso no topo do arquivo
+import React, { createContext, useContext, useState } from 'react';
+
+
 export const ConfigContext = createContext();
+const localhost = 'http://localhost:3002';
+const prodURL = 'https://serveradmin-whhj.onrender.com';
 
 export const ConfigProvider = ({ children }) => {
-  const [config, setConfig] = useState({
-    apiUrl: localhost,
-  });
-
-
+  const [apiUrl, setApiUrl] = useState(process.env.NEXT_PUBLIC_API_URL || localhost);
 
   return (
-    <ConfigContext.Provider value={config}>
+    <ConfigContext.Provider value={{ apiUrl, setApiUrl }}>
       {children}
     </ConfigContext.Provider>
   );
 };
 
-export const useConfig = () => React.useContext(ConfigContext);
+export const useConfig = () => {
+  const context = useContext(ConfigContext);
+  if (!context) {
+    throw new Error("useConfig must be used within a ConfigProvider");
+  }
+  return context;
+};
