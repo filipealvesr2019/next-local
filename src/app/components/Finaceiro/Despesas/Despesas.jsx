@@ -1,3 +1,4 @@
+"use client"
 import {
   Modal,
   ModalOverlay,
@@ -62,7 +63,6 @@ export default function Despesas() {
     await getDespesasTudo();
   };
 
-  // console.log("adminEccommerceID", adminEccommerceID)
   async function getDespesasMes() {
     try {
       const response = await axios.get(`${apiUrl}/api/despesas/mes/${AdminID}`);
@@ -70,10 +70,11 @@ export default function Despesas() {
       // console.log("getDespesas", response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
-      setMes(response.data || []);
-      [];
+      // Here, you should handle the error gracefully.
+      setMes([]); // Resetting mes to an empty array on error
     }
   }
+  
   // console.log("adminEccommerceID", adminEccommerceID)
   async function getDespesasDia() {
     try {
