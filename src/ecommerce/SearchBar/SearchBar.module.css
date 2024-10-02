@@ -1,0 +1,11 @@
+.input{
+    color: white;
+    width: 30vw;
+    border-radius: 30px;
+}
+
+@media screen and (max-width: 600px) {
+    .input{
+        display: none;
+    }
+}

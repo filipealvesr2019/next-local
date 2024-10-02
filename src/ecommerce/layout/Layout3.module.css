@@ -1,0 +1,118 @@
+.header {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    z-index: 7;
+    width: 100%;
+  }
+  .section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #2a2d34;
+    color: #ffffff;
+    padding: 1rem;
+    border-radius: 10px;
+  }
+  
+  .stylesHeader {
+    background-color: white;
+    position: absolute;
+    z-index: 5;
+    border: 1px solid #eaeaea;
+    margin-top: 5rem;
+    margin-left: 10rem;
+  }
+  .main {
+    display: flex;
+  
+    align-items: center;
+  }
+  .footer {
+    height: 100vw;
+  }
+  .container {
+    display: flex;
+    flex-direction: row;
+  }
+  
+  .screenContainer {
+    width: 100vw;
+  }
+  
+  .header__img {
+    width: 10vw;
+  }
+  
+  .header__icons {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .header {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  
+  
+  }
+  .HomeContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 2rem;
+    margin: 0 auto;
+    width: 78vw;
+  }
+  
+  .containerDesktop {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex: 1;
+  }
+
+  .menu {
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    width: 20vw;
+    border-right: 1px solid #eaeaea;
+  }
+  
+  .section {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0.5px solid #eaeaea;
+    width: 100vw;
+    padding: 1.2rem;
+    gap: 1rem;
+    z-index: 1;
+    background-color: #2a2d34;
+    /* position: fixed;
+      top: 0; */
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: row;
+    background-color: #f4f4f4;
+  }
+  
+  .screenContainer {
+    flex: 1;
+    overflow: auto;
+  }
+  

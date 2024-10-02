@@ -1,0 +1,20 @@
+
+.container {
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+
+  margin-top: 9rem;
+  height: 8vh;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.span {
+  color: black;
+}
+@media screen and (max-width: 600px) {
+  .container {
+    display: none;
+  }
+}

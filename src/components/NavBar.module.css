@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  margin: 1rem;
+  justify-content: space-between;
+  width: 100vw;
+  
+}
+
+.menuButton{
+    background-color: black;
+    color: white;
+}
+.img{
+    width: 10vw;
+}
+@media screen and (min-width: 700px) {
+  .container {
+    display: none;
+  }
+}

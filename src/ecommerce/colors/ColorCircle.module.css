@@ -1,0 +1,22 @@
+.colorCircleWrapper {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .colorCircle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    display: inline-block;
+  }
+  
+  .colorInput {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
