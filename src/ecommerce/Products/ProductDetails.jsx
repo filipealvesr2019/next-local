@@ -1,20 +1,19 @@
+ "use client"
 import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import { useConfig } from "../../../context/ConfigContext";
 import styles from "./ProductDetails.module.css";
 import Cookies from "js-cookie";
-import { useNavigate, useParams } from "react-router-dom";
 
-export default function ProductDetails() {
+export default function ProductDetails({name, productId}) {
   const { apiUrl } = useConfig();
   const [data, setData] = useState(null); // Alterado de [] para null
   const [selectedVariations, setSelectedVariations] = useState({});
   const [quantity, setQuantity] = useState(1); // Adicionado campo de quantidade
   const AdminID = Cookies.get("AdminID");
-  const { productId,name } = useParams();
+
   const [message, setMessage] = useState('');
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
-  const navigate = useNavigate();
 
     // Função para formatar o subdomínio
     const formatProductNameForURL = (str) => {
@@ -69,9 +68,9 @@ export default function ProductDetails() {
         }
       );
       setMessage(response.data.message);
-      if(response.data){
-        navigate('/qrcode')
-      }
+      // if(response.data){
+      //   navigate('/qrcode')
+      // }
     
     } catch (error) {
       if (error.response) {
