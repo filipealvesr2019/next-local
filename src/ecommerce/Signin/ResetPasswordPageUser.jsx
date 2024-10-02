@@ -1,12 +1,12 @@
+ "use client"
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import Header from '../../components/Header';
+
 import style from "./ResetPasswordPageUser.module.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-const ResetPasswordPage = () => {
-  const { token } = useParams(); // Extrai o token da URL
+import Header from '@/components/Header';
+const ResetPasswordPageUser = ({ token }) => {
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,7 +28,7 @@ const ResetPasswordPage = () => {
       }
 
       // Enviar a solicitação para redefinir a senha
-      const response = await axios.post('http://localhost:3002api/user/reset-password/:token', {
+      const response = await axios.post('http://localhost:3002/api/user-reset-password/:token', {
         token,
         newPassword,
         confirmPassword,
@@ -92,4 +92,4 @@ const ResetPasswordPage = () => {
   );
 };
 
-export default ResetPasswordPage;
+export default ResetPasswordPageUser;
