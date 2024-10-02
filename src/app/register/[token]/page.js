@@ -1,16 +1,19 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import styles from './Register.module.css';
+import { useConfig } from '../../../../context/ConfigContext';
 import Header from '@/components/Header';
 
+
 function RegisterUser({params}) {
+  
+  const [subdomain, setSubdomain] = useState('');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -56,11 +59,12 @@ function RegisterUser({params}) {
   };
 
   const role = 'administrador'; // Definindo o papel (role) como 'customer' por padrão
+  const { apiUrl } = useConfig();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:3003/api/register/${token}`, { email, password, role });
+      const response = await axios.post(`${apiUrl}/api/admin/register/${token}`, {subdomain, email, password, role });
       setMessage(response.data.message);
     } catch (error) {
       setError(error.response.data.error);
@@ -73,7 +77,14 @@ function RegisterUser({params}) {
       <div className={styles.container}>
         <form onSubmit={handleSubmit} className={styles.formContainer}>
           <h2 className={styles.h2}>Cadastro</h2>
+
+          
           {message && <p>{message}</p>}
+
+          <div className={styles.specs}>
+            <label className={styles.label}>Nome da Loja:</label>
+            <input type="text" value={subdomain} onChange={(e) => setSubdomain(e.target.value)} required className={styles.input} />
+          </div>
           <div className={styles.specs}>
             <label className={styles.label}>Email:</label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={styles.input} />
