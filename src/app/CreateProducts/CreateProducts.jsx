@@ -21,7 +21,7 @@ export default function Products() {
 
   async function handleGetEcommerce() {
     try {
-      const response = await axios.get(`${apiUrl}/api/loja/admin/${AdminID}`);
+      const response = await axios.get(`${apiUrl}/api/store/admin/${AdminID}`);
       setStoreID(response.data._id);
 
       // Atualize o formData com o storeID assim que ele for recuperado

@@ -2,10 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useConfig } from "../../../context/ConfigContext";
 import styles from "./ProductDetails.module.css";
-import { Link } from "react-router-dom";
 import { useAtom } from "jotai";
 import { storeID } from "../../../store/store";
 import Cookies from "js-cookie";
+import Link from "next/link";
 
 export default function Products() {
   const { apiUrl } = useConfig();
@@ -57,7 +57,7 @@ export default function Products() {
     <div style={{ marginTop: "25rem" }}>
       {data.length > 0 ? (
         data.map((product) => (
-          <Link to={`/user/product/${formatProductNameForURL(product.name)}/${product._id}`} key={product._id}>
+          <Link href={`/user/product/${formatProductNameForURL(product.name)}/${product._id}`} key={product._id}>
             <div style={{ marginTop: "10rem" }}>
               {product.name}
               <img src={product.imageUrl} alt={product.name} style={{ width: "15vw" }} />

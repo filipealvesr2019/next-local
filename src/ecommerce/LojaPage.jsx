@@ -1,5 +1,5 @@
+"use client"
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Navbar from "./Navbar/Navbar";
@@ -13,7 +13,7 @@ import { useConfig } from "../../context/ConfigContext";
 import { useSetAtom } from "jotai";
 import { storeID } from "../../store/store";
 import { Chat } from "@mui/icons-material";
-const LojaPage = () => {
+const LojaPage = ({store}) => {
   const [ecommerce, setEcommerce] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingSection, setEditingSection] = useState(null);
@@ -36,12 +36,12 @@ const LojaPage = () => {
   const { apiUrl } = useConfig();
   const setStoreID = useSetAtom(storeID);
 
-  const { subdomain } = useParams();
+
   useEffect(() => {
     const fetchEcommerce = async () => {
       try {
         const response = await axios.get(
-          `${apiUrl}/api/loja/${subdomain}`
+          `${apiUrl}/api/loja/${store}`
         );
         setEcommerce(response.data);
         setLogo(response.data.theme.header.Logo);

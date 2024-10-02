@@ -1,11 +1,12 @@
 // Header.js
 import React from 'react';
-import { Link } from 'react-router-dom';
-import Navbar from '../Navbar/Navbar';
+
 import SearchBar from '../SearchBar/SearchBar';
 import styles from './Header.module.css'; // Ajuste o caminho para o seu CSS
 import Layout1 from "../layout/Layout2.module.css";
 import Layout2 from "../layout/Layout2.module.css";
+import Navbar from '../Navbar/Navbar';
+import Link from 'next/link';
 const Header = ({
   headerColorFrame,
   headerBackgroundColor,
@@ -48,7 +49,7 @@ const Header = ({
             alt="Icon"
           />
         </a>
-        <Link to="/cart">
+        <Link href="/cart" legacyBehavior>
           <a href="#">
             <img
               src="https://i.imgur.com/1XrvJJL.png"
@@ -58,7 +59,7 @@ const Header = ({
             />
           </a>
         </Link>
-        <Link to="/signin">
+        <Link href="/signin" legacyBehavior>
           <a href="#">
             <img
               src="https://i.imgur.com/qshOO5Z.png"

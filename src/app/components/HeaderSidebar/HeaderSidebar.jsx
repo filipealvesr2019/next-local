@@ -6,7 +6,7 @@ export default function HeaderSidebar() {
     <div className={styles.HeaderSidebar}>
       <div className={styles.iconContainer}>
       <a>
-        <Link href={`/loja`}>
+        <Link href={`/store`}>
       
             <img
               src="https://i.imgur.com/fZcOI6u.png"
