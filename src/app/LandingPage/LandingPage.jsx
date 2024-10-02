@@ -42,7 +42,7 @@ const LandingPage = () => {
                 </button>
               </li>
               </Link>
-              <Link  href="/register-user">
+              <Link  href="/register-admin">
               <li className={styles.li}>
                 <button href="#Cadastro" className={styles.button}>
                   Cadastro

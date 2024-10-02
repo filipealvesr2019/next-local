@@ -1,15 +1,16 @@
+"use client"
 import React, { useState } from "react";
 import Profile from "../Profile/Profile";
 import LogoutIcon from "@mui/icons-material/Logout";
-import "./LoginForm.css";
+import "./Signin.css";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Link } from "react-router-dom";
-import { useAuth } from "../../ecommerce/context/UserAuthProvider";
+import { useAuth } from "../context/UserAuthProvider";
+import Link from "next/link";
 
 
 
-const Login = () => {
+const Signin = () => {
   const { loggedIn, isUser, login, logout, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -111,12 +112,12 @@ const Login = () => {
               <span className="error-message">{formErrors.password}</span>
             )}
             <div className="loginStyle__links">
-              <Link to={"/user/register"}>
+              <Link href={"/user/register"}>
                 <span className="span">
                   Ainda não tem uma conta? <b>Cadastre-se</b>
                 </span>
               </Link>
-              <Link to={"/forgotPassword"}>
+              <Link href={"/forgotPassword"}>
                 <span className="span">
                   Esqueceu a senha? <b>Clique aqui</b>
                 </span>
@@ -134,4 +135,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signin;
