@@ -49,7 +49,7 @@ function SiteMap() {
 export async function getServerSideProps({ res }) {
   // Fazemos uma chamada à API para coletar as URLs
   const request = await fetch(STORE_DATA_URL);
-  const { stores } = await request.data.json(); // Altere para desestruturar 'categories'
+  const { stores } = await request.json(); // Altere para desestruturar 'categories'
   const requesProducts = await fetch(PRODUCTS_DATA_URL);
   const { products } = await requesProducts.json(); // Altere para desestruturar 'categories'
 console.log(stores)
