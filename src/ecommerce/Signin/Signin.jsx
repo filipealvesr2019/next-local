@@ -112,7 +112,7 @@ const Signin = () => {
               <span className="error-message">{formErrors.password}</span>
             )}
             <div className="loginStyle__links">
-              <Link href={"/user/register"}>
+              <Link href={"/register-user"}>
                 <span className="span">
                   Ainda não tem uma conta? <b>Cadastre-se</b>
                 </span>

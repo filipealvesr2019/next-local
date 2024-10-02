@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from "react";
 import axios from "axios";
 import Header from '../../components/Header';
@@ -7,7 +8,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const RegisterLink = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
@@ -15,11 +15,10 @@ const RegisterLink = () => {
     const role = 'User'; // Definindo o papel (role) como 'customer' por padrão
 
     try {
-      const newUser = { email, password, role };
+      const newUser = { email, role };
       await axios.post("http://localhost:3002/api/user/register/request", newUser);
       // Limpar o formulário após o envio bem-sucedido
       setEmail("");
-      setPassword("");
       setError("");
       toast.success("Email enviado com sucesso cheque a sua caixa de email!");
 
