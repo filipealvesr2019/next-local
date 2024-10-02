@@ -1,6 +1,6 @@
+"use client"
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -9,19 +9,19 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import styles from './RegisterUser.module.css';
 
-function RegisterUser() {
+function RegisterUser({token}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const { token } = useParams();
+
   const [showPassword, setShowPassword] = useState(null);
   const [containsSpecialCharacter, setContainsSpecialCharacter] = useState(false);
   const [containsNumber, setContainsNumber] = useState(false);
   const [containsCapitalLetter, setContainsCapitalLetter] = useState(false);
   const [containsLowerCase, setContainsLowerCase] = useState(false);
   const [isAddButtonDisabled, setIsAddButtonDisabled] = useState(true);
-
+console.log(token)
   useEffect(() => {
     // O token agora está disponível aqui, você pode usá-lo como desejar
     console.log(token);
@@ -59,7 +59,7 @@ function RegisterUser() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:3002/api/user/register/${token}`, { email, password, role });
+      const response = await axios.post(`http://localhost:3002/api/register-user-token/${token}`, { email, password, role });
       setMessage(response.data.message);
     } catch (error) {
       setError(error.response.data.error);
