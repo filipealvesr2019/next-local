@@ -32,7 +32,7 @@ function generateSiteMap(stores, products) {
            .map(({ name, _id }) => {
              return `
       <url>
-        <loc>${`http://localhost:5002/product/${formatName(
+        <loc>${`http://localhost:5002/user/product/${formatName(
           name
         )}/${_id}`}</loc>
       </url>

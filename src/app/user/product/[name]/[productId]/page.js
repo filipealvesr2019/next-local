@@ -1,7 +1,8 @@
-import ProductDetails from "@/ecommerce/Products/ProductDetails";
+import ProductDetails from "@/ecommerce/Products/ProductDetails"
 
-export default function page(params){
+export default function page({params}){
     const {name, productId} = params
+
     return (
         <>
         <ProductDetails name={name} productId={productId} />

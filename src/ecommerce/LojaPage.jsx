@@ -35,7 +35,7 @@ const LojaPage = ({store}) => {
   const [footerTextColorFrame, setFooterTextColorFrame] = useState(mainColor);
   const { apiUrl } = useConfig();
   const setStoreID = useSetAtom(storeID);
-
+  
 
   useEffect(() => {
     const fetchEcommerce = async () => {
