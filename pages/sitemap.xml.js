@@ -24,8 +24,7 @@ function generateSiteMap(stores, products) {
       })
       .join("")}
       
-         ${products
-           .map(({ name, _id }) => {
+         ${products?.map(({ name, _id }) => {
              return `
       <url>
         <loc>${`http://localhost:5002/user/product/${formatName(
