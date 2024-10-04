@@ -85,6 +85,8 @@ export default function InitialFocus({onSuccess}) {
                 >
                   <option value="receita">Receita</option>
                   <option value="despesa">Despesa</option>
+                  <option value="loja">Loja</option>
+
                 </select>
               </form>
             </FormControl>

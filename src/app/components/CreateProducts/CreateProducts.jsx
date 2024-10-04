@@ -16,6 +16,7 @@ export default function Products() {
     price: '',
     imageUrl: '',
     category: '',
+    categoryName: '',
     variations: [] // Inicialmente vazio, será preenchido com variações
   });
 
@@ -40,11 +41,23 @@ export default function Products() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  
+    if (name === 'category') {
+      // Encontre o nome da categoria correspondente ao ID selecionado
+      const selectedCategory = categories.find(category => category._id === value);
+      setFormData({
+        ...formData,
+        category: value,
+        categoryName: selectedCategory ? selectedCategory.name : '' // Atualize também o nome da categoria
+      });
+    } else {
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
+  
 
   const handleVariationChange = (index, e) => {
     const { name, value } = e.target;
@@ -93,6 +106,28 @@ export default function Products() {
     }
   };
 
+
+
+  const [categories, setCategories] = useState([]);
+
+  // Buscar as categorias do adminID
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/categories/${AdminID}`);
+        setCategories(response.data);
+        console.log("categories", response.data)
+      } catch (error) {
+        console.error("Erro ao buscar categorias:", error);
+      }
+    };
+
+    fetchCategories();
+  }, [apiUrl, AdminID]);
+
+
+
+  
   return (
     <>
       <form onSubmit={handleSubmit} style={{ marginTop: '5rem' }}>
@@ -104,14 +139,25 @@ export default function Products() {
           value={formData.name}
           required
         />
-        <input
-          type="text"
-          name="category"
-          placeholder="Categoria"
-          onChange={handleChange}
-          value={formData.category}
-          required
-        />
+       <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="" disabled>
+                    Selecione uma categoria
+                  </option>
+                  {categories.map((category) => (
+                   <>
+                       {category.type === "loja" &&  <option key={category._id} value={category._id}>
+                      {category.name}
+                    </option>
+                    }
+                   
+                   </>
+                  ))}
+                </select>
          <input
           type="text"
           name="imageUrl"

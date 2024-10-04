@@ -35,9 +35,7 @@ export default function Receitas() {
   const [data, setData] = useState([]);
   const fetchReceitas = async () => {
     getCategories();
-
   };
-
 
   const [deleteCategory, setDeleteCategory] = useState(null);
 
@@ -73,7 +71,7 @@ export default function Receitas() {
       );
       // Atualize a lista de receitas após a alteração
       await getCategories();
-    
+
       onClose();
     } catch (error) {
       console.error("Error updating status:", error);
@@ -81,7 +79,7 @@ export default function Receitas() {
   };
   return (
     <>
-      <CriarCategoriasModal  onSuccess={fetchReceitas}/>
+      <CriarCategoriasModal onSuccess={fetchReceitas} />
       {data.length > 0 ? (
         <TableContainer
           style={{
@@ -92,27 +90,34 @@ export default function Receitas() {
           <Table variant="simple">
             <Thead>
               <Tr>
-              <Th>Nome da Categoria</Th>
-              <Th>Tipo</Th>
-              <Th>Excluir</Th>
-
+                <Th>Nome da Categoria</Th>
+                <Th>Tipo</Th>
+                <Th>Excluir</Th>
               </Tr>
             </Thead>
             <Tbody>
               {data.map((revenue) => (
                 <Tr key={revenue._id}>
                   <Td>{revenue.name}</Td>
-                  <Td className={revenue.type === "despesa" ? styles.typeDespesa : styles.typeReceita}>{revenue.type}</Td>
-                 
                   <Td
-                          style={{
-                            color: "#C0392B",
-                            cursor:"pointer"
-                          }}
-                          onClick={() => openDeleteModal(revenue)}
-                        >
-                          <DeleteIcon />
-                        </Td>
+                    className={
+                      revenue.type === "despesa"
+                        ? styles.typeDespesa
+                        : styles.typeReceita
+                    }
+                  >
+                    {revenue.type}
+                  </Td>
+
+                  <Td
+                    style={{
+                      color: "#C0392B",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => openDeleteModal(revenue)}
+                  >
+                    <DeleteIcon />
+                  </Td>
                 </Tr>
               ))}
             </Tbody>
@@ -121,8 +126,8 @@ export default function Receitas() {
       ) : (
         <p>No products available</p>
       )}
-       {/* Modal para confirmar a exclusão de despesa */}
-       <Modal
+      {/* Modal para confirmar a exclusão de despesa */}
+      <Modal
         closeOnOverlayClick={false}
         isOpen={isDeleteModalOpen}
         onClose={onCloseDeleteModal}

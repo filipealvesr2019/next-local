@@ -22,7 +22,7 @@ function generateSiteMap(stores, products) {
       console.log(dominio)
         return `
       <url>
-        <loc>${`http://localhost:5002/store/${dominio}`}</loc>
+        <loc>${`http://localhost:5002/loja/${dominio}`}</loc>
       </url>
     `;
       })
