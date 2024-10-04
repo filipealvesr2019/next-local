@@ -46,3 +46,6 @@ export const updateAuthAtom = atom(
     Cookies.set('token', token, { expires: 1 }); // Armazena o token em cookies por 1 dia
   }
 );
+
+
+export const cartAtom = atom([]);

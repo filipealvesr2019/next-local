@@ -16,7 +16,9 @@ export default function ProductDetails({name, productId}) {
   const [message, setMessage] = useState('');
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
   const router = useRouter();
+  const storeID = Cookies.get("storeID"); // Obtenha o ID do cliente do cookie
 
+  
     // Função para formatar o subdomínio
     const formatProductNameForURL = (str) => {
       return str
@@ -67,7 +69,8 @@ export default function ProductDetails({name, productId}) {
         {
           variations: variationsArray,
           quantity,
-          paymentMethod, // Incluindo o método de pagamento na requisição
+          storeID: storeID, // Incluindo o método de pagamento na requisição
+          productId
 
         }
       );
