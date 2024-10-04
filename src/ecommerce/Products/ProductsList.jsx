@@ -6,13 +6,14 @@ import { useAtom } from "jotai";
 import { storeID } from "../../../store/store";
 import Cookies from "js-cookie";
 import Link from "next/link";
-
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 export default function Products() {
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
   const [selectedVariations, setSelectedVariations] = useState({});
   const [ecommerceID, setEcommerceID] = useAtom(storeID); // Use corretamente o atom
-
+  const [toggleIcon, setToggleIcon] = useState(false)
   const [message, setMessage] = useState('');
 
   // Função para buscar produtos
@@ -53,16 +54,27 @@ export default function Products() {
       .replace(/[^\w\-]+/g, ""); // Remove caracteres não alfanuméricos (exceto hífens)
   };
 
+
+  const handleToggleIconClick = () =>{
+    setToggleIcon(!toggleIcon)
+  }
   return (
     <div style={{ marginTop: "25rem" }}>
       {data.length > 0 ? (
         data.map((product) => (
+          <>
           <Link href={`/user/product/${formatProductNameForURL(product.name)}/${product._id}`} key={product._id}>
             <div style={{ marginTop: "10rem" }}>
               {product.name}
               <img src={product.imageUrl} alt={product.name} style={{ width: "15vw" }} />
             </div>
           </Link>
+          <div onClick={handleToggleIconClick}>
+          {toggleIcon ? <RemoveIcon /> : <AddIcon />}
+
+          </div>
+            
+          </>
         ))
       ) : (
         <p>No products available</p>
