@@ -1,3 +1,4 @@
+"use client"
 import { useEffect, useState } from "react";
 import { useConfig } from "../../../context/ConfigContext";
 import axios from "axios";

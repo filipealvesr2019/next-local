@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useConfig } from "../../../context/ConfigContext";
 import styles from "./ProductDetails.module.css";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 
 export default function ProductDetails({name, productId}) {
   const { apiUrl } = useConfig();
@@ -14,6 +15,7 @@ export default function ProductDetails({name, productId}) {
 
   const [message, setMessage] = useState('');
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
+  const router = useRouter();
 
     // Função para formatar o subdomínio
     const formatProductNameForURL = (str) => {
@@ -70,9 +72,10 @@ export default function ProductDetails({name, productId}) {
         }
       );
       setMessage(response.data.message);
-      // if(response.data){
-      //   navigate('/qrcode')
-      // }
+      if (response.data && paymentMethod === "Pix") {
+        // Redirecionar para a página de QR Code
+        router.push('/qrcode');
+      }
     
     } catch (error) {
       if (error.response) {
