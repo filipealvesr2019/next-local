@@ -15,6 +15,7 @@ export default function Products() {
   const [ecommerceID, setEcommerceID] = useAtom(storeID); // Use corretamente o atom
   const [toggleIcon, setToggleIcon] = useState(false)
   const [message, setMessage] = useState('');
+  const [cart, setCart] = useState(new Set()); // Estado para manter os IDs dos produtos no carrinho
 
   // Função para buscar produtos
   async function getProducts(id) {
@@ -29,6 +30,8 @@ export default function Products() {
   }
 
   useEffect(() => {
+   
+
     // Recupera o storeID do cookie
     const savedStoreID = Cookies.get("storeID");
 
@@ -55,26 +58,49 @@ export default function Products() {
   };
 
 
-  const handleToggleIconClick = () =>{
-    setToggleIcon(!toggleIcon)
-  }
+  
+  // Função para adicionar/remover do carrinho
+  const toggleCartItem = async (productId, isAdding) => {
+    const UserID = Cookies.get("UserID"); // Supondo que o ID do usuário está armazenado em um cookie
+    try {
+      if (isAdding) {
+        // Adicionar item ao carrinho
+        const response = await axios.post(`${apiUrl}/api/cart/${UserID}/${productId}`, {
+          quantity: 1, // ou qualquer outra lógica de quantidade que você tenha
+        });
+        console.log(response.data.message);
+        setCart(prev => new Set(prev).add(productId)); // Atualiza o estado do carrinho
+      } else {
+        // Remover item do carrinho
+        await axios.delete(`${apiUrl}/api/cart/${UserID}/${productId}`);
+        setCart(prev => {
+          const newCart = new Set(prev);
+          newCart.delete(productId); // Remove o produto do estado
+          return newCart;
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar o carrinho:", error);
+    }
+  };
+
+
+
   return (
     <div style={{ marginTop: "25rem" }}>
       {data.length > 0 ? (
         data.map((product) => (
-          <>
-          <Link href={`/user/product/${formatProductNameForURL(product.name)}/${product._id}`} key={product._id}>
-            <div style={{ marginTop: "10rem" }}>
-              {product.name}
-              <img src={product.imageUrl} alt={product.name} style={{ width: "15vw" }} />
+          <div key={product._id} style={{ marginTop: "10rem" }}>
+            <Link href={`/user/product/${formatProductNameForURL(product.name)}/${product._id}`}>
+              <div>
+                {product.name}
+                <img src={product.imageUrl} alt={product.name} style={{ width: "15vw" }} />
+              </div>
+            </Link>
+            <div onClick={() => toggleCartItem(product._id, !cart.has(product._id))}>
+              {cart.has(product._id) ? <RemoveIcon /> : <AddIcon />}
             </div>
-          </Link>
-          <div onClick={handleToggleIconClick}>
-          {toggleIcon ? <RemoveIcon /> : <AddIcon />}
-
           </div>
-            
-          </>
         ))
       ) : (
         <p>No products available</p>

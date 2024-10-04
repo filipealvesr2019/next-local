@@ -113,7 +113,7 @@ export default function ProductDetails({name, productId}) {
           </div>
           
           {/* Campo para selecionar a quantidade */}
-          <div>
+          {/* <div>
             <label htmlFor="quantity">Quantidade:</label>
             <input
               type="number"
@@ -151,7 +151,7 @@ export default function ProductDetails({name, productId}) {
               />
               Dinheiro
             </label>
-          </div>
+          </div> */}
 
           <button onClick={handleSubmit}>Fazer Pedido</button>
           {message && <p>{message}</p>}
