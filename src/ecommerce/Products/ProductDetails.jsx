@@ -10,7 +10,7 @@ export default function ProductDetails({name, productId}) {
   const [data, setData] = useState(null); // Alterado de [] para null
   const [selectedVariations, setSelectedVariations] = useState({});
   const [quantity, setQuantity] = useState(1); // Adicionado campo de quantidade
-  const AdminID = Cookies.get("AdminID");
+  const [paymentMethod, setPaymentMethod] = useState(""); // Estado para o método de pagamento
 
   const [message, setMessage] = useState('');
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
@@ -65,6 +65,8 @@ export default function ProductDetails({name, productId}) {
         {
           variations: variationsArray,
           quantity,
+          paymentMethod, // Incluindo o método de pagamento na requisição
+
         }
       );
       setMessage(response.data.message);
@@ -114,6 +116,35 @@ export default function ProductDetails({name, productId}) {
               value={quantity}
               onChange={(e) => setQuantity(Number(e.target.value))}
             />
+          </div>
+          <div>
+            <label>
+              <input
+                type="radio"
+                value="Pix"
+                checked={paymentMethod === 'Pix'}
+                onChange={() => setPaymentMethod('Pix')}
+              />
+              PIX
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="Cartão de Credito"
+                checked={paymentMethod === 'Cartão de Credito'}
+                onChange={() => setPaymentMethod('Cartão de Credito')}
+              />
+              Cartão de Crédito
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="Dinheiro"
+                checked={paymentMethod === 'Dinheiro'}
+                onChange={() => setPaymentMethod('Dinheiro')}
+              />
+              Dinheiro
+            </label>
           </div>
 
           <button onClick={handleSubmit}>Fazer Pedido</button>
