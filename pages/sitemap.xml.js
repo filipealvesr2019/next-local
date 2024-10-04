@@ -9,6 +9,7 @@ const formatName = (name) => {
 };
 
 function generateSiteMap(stores, products) {
+
   return `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <!-- URLs fixas -->
@@ -22,7 +23,7 @@ function generateSiteMap(stores, products) {
       console.log(dominio)
         return `
       <url>
-        <loc>${`http://localhost:5002/loja/${dominio}`}</loc>
+        <loc>${`http://localhost:5002/store/${dominio}`}</loc>
       </url>
     `;
       })
@@ -48,8 +49,8 @@ function SiteMap() {
 
 export async function getServerSideProps({ res }) {
   // Fazemos uma chamada à API para coletar as URLs
-  const request = await fetch(STORE_DATA_URL);
-  const { stores } = await request.json(); // Altere para desestruturar 'categories'
+  const storeRequest = await fetch(STORE_DATA_URL);
+  const stores = await storeRequest.json(); // Não precisa desestruturar, pois é um array simples
   const requesProducts = await fetch(PRODUCTS_DATA_URL);
   const { products } = await requesProducts.json(); // Altere para desestruturar 'categories'
 console.log(stores)
