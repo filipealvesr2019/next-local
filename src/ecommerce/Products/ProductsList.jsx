@@ -115,6 +115,7 @@ export default function Products() {
             <div onClick={() => toggleCartItem(product._id, !cart.has(product._id))}>
               {cart.has(product._id) ? <RemoveIcon /> : <AddIcon />}
             </div>
+            
           </div>
         ))
       ) : (

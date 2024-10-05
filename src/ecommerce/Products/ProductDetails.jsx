@@ -1,4 +1,4 @@
- "use client"
+"use client";
 import axios from "axios";
 import { useEffect, useState, useCallback } from "react";
 import { useConfig } from "../../../context/ConfigContext";
@@ -9,7 +9,7 @@ import { cartCountAtom } from "../../../store/store";
 import { useAtom } from "jotai";
 import HeaderContainer from "../StoreContainer/HeaderContainer";
 
-export default function ProductDetails({name, productId}) {
+export default function ProductDetails({ name, productId }) {
   const { apiUrl } = useConfig();
   const [data, setData] = useState(null); // Alterado de [] para null
   const [selectedVariations, setSelectedVariations] = useState({});
@@ -17,27 +17,28 @@ export default function ProductDetails({name, productId}) {
   const [paymentMethod, setPaymentMethod] = useState(""); // Estado para o método de pagamento
   const [cartCount, setCartCount] = useAtom(cartCountAtom); // Adicione esta linha
 
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
   const router = useRouter();
   const storeID = Cookies.get("storeID"); // Obtenha o ID do cliente do cookie
 
-  
-    // Função para formatar o subdomínio
-    const formatProductNameForURL = (str) => {
-      return str
-        .normalize("NFD") // Normaliza a string para decompor caracteres acentuados
-        .replace(/[\u0300-\u036f]/g, "") // Remove os diacríticos (acentos)
-        .toLowerCase() // Converte para letras minúsculas
-        .replace(/\s+/g, "-") // Substitui espaços por hífens
-        .replace(/[^\w\-]+/g, ""); // Remove caracteres não alfanuméricos (exceto hífens)
-    };
+  // Função para formatar o subdomínio
+  const formatProductNameForURL = (str) => {
+    return str
+      .normalize("NFD") // Normaliza a string para decompor caracteres acentuados
+      .replace(/[\u0300-\u036f]/g, "") // Remove os diacríticos (acentos)
+      .toLowerCase() // Converte para letras minúsculas
+      .replace(/\s+/g, "-") // Substitui espaços por hífens
+      .replace(/[^\w\-]+/g, ""); // Remove caracteres não alfanuméricos (exceto hífens)
+  };
 
-    // Aplicar a normalização ao subdomínio
+  // Aplicar a normalização ao subdomínio
 
   async function getProducts() {
     try {
-      const response = await axios.get(`${apiUrl}/api/product/${formatProductNameForURL(name)}/${productId}`);
+      const response = await axios.get(
+        `${apiUrl}/api/product/${formatProductNameForURL(name)}/${productId}`
+      );
       setData(response.data);
 
       console.log("resposata da api", response.data);
@@ -62,17 +63,17 @@ export default function ProductDetails({name, productId}) {
       }
     });
   }, []);
-// No componente ProductDetails
-useEffect(() => {
-  // Carregar estado do carrinho do localStorage
-  const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
-  const savedCount = savedCart.length;
-  setCartCount(savedCount);
-}, []);
+  // No componente ProductDetails
+  useEffect(() => {
+    // Carregar estado do carrinho do localStorage
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const savedCount = savedCart.length;
+    setCartCount(savedCount);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const variationsArray = Object.values(selectedVariations);
     try {
       const response = await axios.post(
@@ -81,26 +82,24 @@ useEffect(() => {
           variations: variationsArray,
           quantity,
           storeID: storeID, // Incluindo o método de pagamento na requisição
-          productId
-
+          productId,
         }
       );
       setMessage(response.data.message);
-  // Atualiza o cartCount e localStorage após o sucesso
-  setCartCount((prevCount) => prevCount + quantity);
-  const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
-  const updatedCart = [...currentCart, productId]; // ou outros dados que você deseja salvar
-  localStorage.setItem("cart", JSON.stringify(updatedCart));
+      // Atualiza o cartCount e localStorage após o sucesso
+      setCartCount((prevCount) => prevCount + quantity);
+      const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
+      const updatedCart = [...currentCart, productId]; // ou outros dados que você deseja salvar
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
       if (response.data && paymentMethod === "Pix") {
         // Redirecionar para a página de QR Code
-        router.push('/qrcode');
+        router.push("/qrcode");
       }
-    
     } catch (error) {
       if (error.response) {
         setMessage(error.response.data.message);
       } else {
-        setMessage('Erro ao criar pedido.');
+        setMessage("Erro ao criar pedido.");
       }
     }
   };
@@ -116,10 +115,16 @@ useEffect(() => {
             {data.variations && data.variations.length > 0 ? (
               data.variations.map((variation, index) => (
                 <div key={index} className={styles.variationContainer}>
-                  <img src={variation.url} alt={variation.name} style={{ width: "15vw" }} />
+                  <img
+                    src={variation.url}
+                    alt={variation.name}
+                    style={{ width: "15vw" }}
+                  />
                   <p>{variation.name}</p>
                   <p>R${variation.price}</p>
-                  <span onClick={() => handleVariation(data._id, variation, index)}>
+                  <span
+                    onClick={() => handleVariation(data._id, variation, index)}
+                  >
                     {selectedVariations[`${data._id}-${index}`] ? "-" : "+"}
                   </span>
                 </div>
@@ -128,7 +133,7 @@ useEffect(() => {
               <p>No variations available</p>
             )}
           </div>
-          
+
           {/* Campo para selecionar a quantidade */}
           {/* <div>
             <label htmlFor="quantity">Quantidade:</label>
