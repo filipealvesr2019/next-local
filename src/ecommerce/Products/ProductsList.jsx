@@ -59,30 +59,39 @@ export default function Products() {
   };
 
 
-  
+  useEffect(() => {
+    // Carregar estado do carrinho do localStorage
+    const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const savedCount = savedCart.length;
+
+    setCart(new Set(savedCart));
+    setCartCount(savedCount);
+  }, []);
+
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
-    const UserID = Cookies.get("UserID"); // Supondo que o ID do usuário está armazenado em um cookie
+    const UserID = Cookies.get("UserID");
     try {
       if (isAdding) {
-        // Adicionar item ao carrinho
-        const response = await axios.post(`${apiUrl}/api/cart/${UserID}/${productId}`, {
-          quantity: 1, // ou qualquer outra lógica de quantidade que você tenha
+        await axios.post(`${apiUrl}/api/cart/${UserID}/${productId}`, {
+          quantity: 1,
         });
-        console.log(response.data.message);
-        setCart(prev => new Set(prev).add(productId)); // Atualiza o estado do carrinho
-        setCartCount(prevCount => prevCount + 1); // Incrementa a contagem
-
-      } else {
-        // Remover item do carrinho
-        await axios.delete(`${apiUrl}/api/cart/${UserID}/${productId}`);
-        setCart(prev => {
+        setCart((prev) => {
           const newCart = new Set(prev);
-          newCart.delete(productId); // Remove o produto do estado
+          newCart.add(productId);
+          localStorage.setItem("cart", JSON.stringify(Array.from(newCart))); // Atualiza o localStorage
           return newCart;
         });
-        setCartCount(prevCount => prevCount - 1); // Decrementa a contagem
-
+        setCartCount((prevCount) => prevCount + 1);
+      } else {
+        await axios.delete(`${apiUrl}/api/cart/${UserID}/${productId}`);
+        setCart((prev) => {
+          const newCart = new Set(prev);
+          newCart.delete(productId);
+          localStorage.setItem("cart", JSON.stringify(Array.from(newCart))); // Atualiza o localStorage
+          return newCart;
+        });
+        setCartCount((prevCount) => prevCount - 1);
       }
     } catch (error) {
       console.error("Erro ao atualizar o carrinho:", error);
