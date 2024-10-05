@@ -7,7 +7,7 @@ import { cartCountAtom, storeID } from "../../../store/store";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import AddIcon from '@mui/icons-material/Add';
-import RemoveIcon from '@mui/icons-material/Remove';
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 export default function Products() {
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
@@ -113,9 +113,10 @@ export default function Products() {
               </div>
             </Link>
             <div onClick={() => toggleCartItem(product._id, !cart.has(product._id))}>
-              {cart.has(product._id) ? <RemoveIcon /> : <AddIcon />}
+              {cart.has(product._id) ?
+              (<><CheckCircleOutlinedIcon />remover</> ) :
+               (<> <AddIcon />adicionar</>) }
             </div>
-            
           </div>
         ))
       ) : (
