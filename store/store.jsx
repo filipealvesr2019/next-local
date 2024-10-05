@@ -48,4 +48,5 @@ export const updateAuthAtom = atom(
 );
 
 
-export const cartAtom = atom([]);
+// Estado global do carrinho (um array de produtos no carrinho)
+export const cartCountAtom = atom(0); // Inicia com zero itens

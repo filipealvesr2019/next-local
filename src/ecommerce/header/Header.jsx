@@ -7,6 +7,8 @@ import Layout1 from "../layout/Layout2.module.css";
 import Layout2 from "../layout/Layout2.module.css";
 import Navbar from '../Navbar/Navbar';
 import Link from 'next/link';
+import { cartCountAtom } from '../../../store/store';
+import { useAtom } from 'jotai';
 const Header = ({
   headerColorFrame,
   headerBackgroundColor,
@@ -28,6 +30,8 @@ const Header = ({
       };
     
       const styles = layoutStyles(); // Chame a função para obter o estilo correto
+      const [cartCount] = useAtom(cartCountAtom); // Use o atom de contagem
+
   return (
     <header
       style={{
@@ -57,6 +61,11 @@ const Header = ({
               style={{ width: '2.5rem' }}
               alt="Cart"
             />
+             {cartCount > 0 && (
+              <span style={{ position: 'absolute', top: '-10px', right: '-10px', background: 'red', borderRadius: '50%', color: 'white', padding: '0.2rem 0.5rem' }}>
+                {cartCount}
+              </span>
+            )}
           </a>
         </Link>
         <Link href="/signin" legacyBehavior>

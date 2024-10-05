@@ -1,3 +1,5 @@
+
+"use client"
 import React, { useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -7,7 +9,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useConfig } from '../../../context/ConfigContext';
 
-const userAuthProvider  = ({ children }) => {
+const UserAuthProvider  = ({ children }) => {
   const [loggedIn, setLoggedIn] = useAtom(loggedInCustomerAtom);
   const [isUser, setIsUser] = useAtom(isCustomerAtom);
   const [customerID, setCustomerID] = useAtom(customerIDAtom);
@@ -25,7 +27,7 @@ const userAuthProvider  = ({ children }) => {
   return <>{children}</>;
 };
 
-export default userAuthProvider ;
+export default UserAuthProvider ;
 
 export const useAuth = () => {
   const [loggedIn, setLoggedIn] = useAtom(loggedInCustomerAtom);

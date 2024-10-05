@@ -1,5 +1,6 @@
-// import Header from '../../ecommerce/header/Header'
+
 // import UserForm from '../UserForm/UserForm'
+import Header from '../header/Header'
 import ProductsList from '../../ecommerce/Products/ProductsList'
 export default function Profile(){
   return (
@@ -7,7 +8,7 @@ export default function Profile(){
     <>
     <ProductsList />
     {/* <UserForm /> */}
-    {/* <Header /> */}
+    <Header />
     </>
   )
 }

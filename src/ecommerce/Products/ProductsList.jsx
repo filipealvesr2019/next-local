@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useConfig } from "../../../context/ConfigContext";
 import styles from "./ProductDetails.module.css";
 import { useAtom } from "jotai";
-import { storeID } from "../../../store/store";
+import { cartCountAtom, storeID } from "../../../store/store";
 import Cookies from "js-cookie";
 import Link from "next/link";
 import AddIcon from '@mui/icons-material/Add';
@@ -16,6 +16,7 @@ export default function Products() {
   const [toggleIcon, setToggleIcon] = useState(false)
   const [message, setMessage] = useState('');
   const [cart, setCart] = useState(new Set()); // Estado para manter os IDs dos produtos no carrinho
+  const [cartCount, setCartCount] = useAtom(cartCountAtom); // Use o atom de contagem
 
   // Função para buscar produtos
   async function getProducts(id) {
@@ -70,6 +71,8 @@ export default function Products() {
         });
         console.log(response.data.message);
         setCart(prev => new Set(prev).add(productId)); // Atualiza o estado do carrinho
+        setCartCount(prevCount => prevCount + 1); // Incrementa a contagem
+
       } else {
         // Remover item do carrinho
         await axios.delete(`${apiUrl}/api/cart/${UserID}/${productId}`);
@@ -78,6 +81,8 @@ export default function Products() {
           newCart.delete(productId); // Remove o produto do estado
           return newCart;
         });
+        setCartCount(prevCount => prevCount - 1); // Decrementa a contagem
+
       }
     } catch (error) {
       console.error("Erro ao atualizar o carrinho:", error);
