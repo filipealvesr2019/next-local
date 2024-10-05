@@ -4,7 +4,7 @@ import { useConfig } from "../../../context/ConfigContext";
 import Cookies from "js-cookie";
 import Header from "../header/Header";
 
-export default function Container(){
+export default function HeaderContainer(){
     const [ecommerce, setEcommerce] = useState(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editingSection, setEditingSection] = useState(null);
