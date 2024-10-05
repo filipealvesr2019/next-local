@@ -105,6 +105,7 @@ export default function Products() {
       {data.length > 0 ? (
         data.map((product) => (
           <div key={product._id} style={{ marginTop: "10rem" }}>
+            
             <Link href={`/user/product/${formatProductNameForURL(product.name)}/${product._id}`}>
               <div>
                 {product.name}

@@ -5,6 +5,9 @@ import { useConfig } from "../../../context/ConfigContext";
 import styles from "./ProductDetails.module.css";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { cartCountAtom } from "../../../store/store";
+import { useAtom } from "jotai";
+import HeaderContainer from "../StoreContainer/HeaderContainer";
 
 export default function ProductDetails({name, productId}) {
   const { apiUrl } = useConfig();
@@ -12,6 +15,7 @@ export default function ProductDetails({name, productId}) {
   const [selectedVariations, setSelectedVariations] = useState({});
   const [quantity, setQuantity] = useState(1); // Adicionado campo de quantidade
   const [paymentMethod, setPaymentMethod] = useState(""); // Estado para o método de pagamento
+  const [cartCount, setCartCount] = useAtom(cartCountAtom); // Adicione esta linha
 
   const [message, setMessage] = useState('');
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
@@ -58,6 +62,13 @@ export default function ProductDetails({name, productId}) {
       }
     });
   }, []);
+// No componente ProductDetails
+useEffect(() => {
+  // Carregar estado do carrinho do localStorage
+  const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
+  const savedCount = savedCart.length;
+  setCartCount(savedCount);
+}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,6 +86,11 @@ export default function ProductDetails({name, productId}) {
         }
       );
       setMessage(response.data.message);
+  // Atualiza o cartCount e localStorage após o sucesso
+  setCartCount((prevCount) => prevCount + quantity);
+  const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
+  const updatedCart = [...currentCart, productId]; // ou outros dados que você deseja salvar
+  localStorage.setItem("cart", JSON.stringify(updatedCart));
       if (response.data && paymentMethod === "Pix") {
         // Redirecionar para a página de QR Code
         router.push('/qrcode');
@@ -93,6 +109,7 @@ export default function ProductDetails({name, productId}) {
     <div style={{ marginTop: "2rem" }}>
       {data ? (
         <div>
+          <HeaderContainer />
           <h2>{data.name}</h2>
           <img src={data.imageUrl} alt={data.name} style={{ width: "15vw" }} />
           <div>
