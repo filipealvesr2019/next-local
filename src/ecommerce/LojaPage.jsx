@@ -64,6 +64,17 @@ const LojaPage = ({store}) => {
     } else {
       console.warn("storeID não encontrado na resposta da API.");
     }
+
+    if (response.data.dominio) {
+      setStoreID(response.data.dominio); // Atualiza o átomo com o novo ID
+      Cookies.set("storeNAME", response.data.dominio, {
+        sameSite: "None",
+        secure: true,
+      }); // Persiste o adminID no cookie
+      console.log("storeNAME atualizado e salvo:", response.data.dominio);
+    } else {
+      console.warn("storeNAME não encontrado na resposta da API.");
+    }
       } catch (error) {
         console.error("Erro ao buscar o e-commerce:", error);
       }

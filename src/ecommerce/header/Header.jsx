@@ -61,11 +61,10 @@ const Header = ({
               style={{ width: '2.5rem' }}
               alt="Cart"
             />
-             {cartCount > 0 && (
-              <span style={{ position: 'absolute', top: '-10px', right: '-10px', background: 'red', borderRadius: '50%', color: 'white', padding: '0.2rem 0.5rem' }}>
+              <span style={{ position: 'absolute', top: '10px', right: '10px', background: 'red', borderRadius: '50%', color: 'white', padding: '0.2rem 0.5rem' }}>
                 {cartCount}
               </span>
-            )}
+      
           </a>
         </Link>
         <Link href="/signin" legacyBehavior>

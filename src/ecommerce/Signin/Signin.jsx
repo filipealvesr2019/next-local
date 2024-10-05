@@ -17,15 +17,6 @@ const Signin = () => {
   const [formErrors, setFormErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleGoogleLogin = (response) => {
-    console.log('Resposta do Google:', response); // Adicione o log para depuração
-    if (response.credential) {
-      loginWithGoogle(response.credential);
-    } else {
-      console.error('Erro ao obter credenciais do Google');
-    }
-  };
-
   const handleLogin = () => {
     if (validateForm()) {
       login(email, password);
