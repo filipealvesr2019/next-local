@@ -91,10 +91,7 @@ export default function ProductDetails({ name, productId }) {
       const currentCart = JSON.parse(localStorage.getItem("cart")) || [];
       const updatedCart = [...currentCart, productId]; // ou outros dados que você deseja salvar
       localStorage.setItem("cart", JSON.stringify(updatedCart));
-      if (response.data && paymentMethod === "Pix") {
-        // Redirecionar para a página de QR Code
-        router.push("/qrcode");
-      }
+     
     } catch (error) {
       if (error.response) {
         setMessage(error.response.data.message);
@@ -134,46 +131,7 @@ export default function ProductDetails({ name, productId }) {
             )}
           </div>
 
-          {/* Campo para selecionar a quantidade */}
-          {/* <div>
-            <label htmlFor="quantity">Quantidade:</label>
-            <input
-              type="number"
-              id="quantity"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-            />
-          </div>
-          <div>
-            <label>
-              <input
-                type="radio"
-                value="Pix"
-                checked={paymentMethod === 'Pix'}
-                onChange={() => setPaymentMethod('Pix')}
-              />
-              PIX
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="Cartão de Credito"
-                checked={paymentMethod === 'Cartão de Credito'}
-                onChange={() => setPaymentMethod('Cartão de Credito')}
-              />
-              Cartão de Crédito
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="Dinheiro"
-                checked={paymentMethod === 'Dinheiro'}
-                onChange={() => setPaymentMethod('Dinheiro')}
-              />
-              Dinheiro
-            </label>
-          </div> */}
+          
 
           <button onClick={handleSubmit}>Fazer Pedido</button>
           {message && <p>{message}</p>}
