@@ -97,6 +97,7 @@ export default function Sales({ storeID }) {
             <Thead>
               <Tr>
                 <Th>Produto</Th>
+                <Th>Metodo de Pagamento</Th>
                 <Th>Data</Th>
                 <Th>Status</Th>
                 <Th isNumeric>Preço</Th>
@@ -114,7 +115,7 @@ export default function Sales({ storeID }) {
                       />
                     </Link>
                   </Td>
-                 
+                  <Td>{product.paymentMethod}</Td>
                   <Td>{formatDate(product.purchaseDate)}</Td>
                   <Td
                     className={product.status === "RECEIVED" ? styles.received : styles.pending}
