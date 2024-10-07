@@ -16,34 +16,42 @@ import {
 } from "@chakra-ui/react";
 
 export default function PIX() {
-  const [qrcode, setQrcode] = useState([]);
-  const [selectedPixKey, setSelectedPixKey] = useState(null); // Para armazenar a chave Pix selecionada
+  const [qrcode, setQrcode] = useState([]); // Armazena todos os QR codes
+  const [selectedPixKey, setSelectedPixKey] = useState(null); // Pix selecionado
   const { apiUrl } = useConfig();
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
 
+  // Função para buscar o PixKey selecionado no Ecommerce e os QR Codes
   useEffect(() => {
-    async function getPix() {
+    async function getPixData() {
       try {
-        const response = await axios.get(`${apiUrl}/api/admin/pix-keys/${AdminID}`);
-        setQrcode(response.data);
+        // Buscar QR Codes do admin
+        const pixResponse = await axios.get(`${apiUrl}/api/admin/pix-keys/${AdminID}`);
+        setQrcode(pixResponse.data);
+
+        // Buscar o ecommerce com o PixKey selecionado
+        const ecommerceResponse = await axios.get(`${apiUrl}/api/pix/admin/${AdminID}`);
+        setSelectedPixKey(ecommerceResponse.data.pixKey); // Define o PixKey selecionado
+
       } catch (error) {
-        console.error("Error fetching pix keys:", error);
+        console.error("Error fetching pix keys or ecommerce data:", error);
         setQrcode([]);
       }
     }
-    getPix();
-  }, []);
+    getPixData();
+  }, [AdminID, apiUrl]);
 
+  // Função para selecionar e salvar o PixKey escolhido
   const handlePixSelection = async (pix) => {
     try {
-      setSelectedPixKey(pix.pixKey); // Define a chave Pix selecionada
+      setSelectedPixKey(pix.pixKey); // Define o PixKey selecionado no estado
 
-      // Atualiza o ecommerce com a chave Pix e QR Code selecionado
+      // Atualiza o ecommerce com o PixKey e QR Code selecionados
       await axios.put(`${apiUrl}/api/ecommerce/update-pix/${AdminID}`, {
         pixKey: pix.pixKey,
         qrCodeUrl: pix.qrCodeUrl
       });
-      
+
       alert("Pix selecionado e salvo com sucesso!");
     } catch (error) {
       console.error("Erro ao salvar a chave Pix:", error);
@@ -78,10 +86,11 @@ export default function PIX() {
                     <RadioGroup value={selectedPixKey}>
                       <Stack direction="row">
                         <Radio
-                          value={pix.pixKey}
-                          onChange={() => handlePixSelection(pix)}
+                          value={pix.pixKey} // O valor é o pixKey
+                          onChange={() => handlePixSelection(pix)} // Seleciona o Pix
+                          isChecked={pix.pixKey === selectedPixKey} // Verifica se está selecionado
                         >
-                          Selecionar
+                       {pix.pixKey === selectedPixKey ? 'Selecionado' : 'Escolher?'}    
                         </Radio>
                       </Stack>
                     </RadioGroup>
