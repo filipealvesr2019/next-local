@@ -64,7 +64,7 @@ export default function PIX() {
         style={{
           border: "1px solid #edf2f7",
           borderRadius: "10px",
-          marginTop: "15rem",
+          marginTop: "10rem",
         }}
       >
         <ModalPix />

@@ -22,7 +22,7 @@ export default function InitialFocus() {
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/api/ecommerce/admin/qrcode`, {
+      const response = await axios.post(`${apiUrl}/api/admin/qrcode`, {
         pixKey,
         adminID: AdminID,
       });
