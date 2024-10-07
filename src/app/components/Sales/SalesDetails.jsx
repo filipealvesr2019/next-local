@@ -66,6 +66,7 @@ export default function SalesDetails({ id }) {
               <Tr>
                 <Th>Produto</Th>
                 <Th>Nome</Th>
+                <Th>Quantidade</Th>
                 <Th>Data</Th>
                 <Th>Status</Th>
                 <Th isNumeric>Preço</Th>
@@ -79,6 +80,8 @@ export default function SalesDetails({ id }) {
                       <img src={item.imageUrl} alt={item.name} style={{ width: '50px', height: '50px' }} />
                     </Td>
                     <Td>{item.name}</Td>
+                    <Td>{item.quantity}</Td>
+
                     <Td>{formatDate(data.purchaseDate)}</Td>
                     <Td>{data.status}</Td>
                     <Td isNumeric>{item.price.toFixed(2)}</Td>
