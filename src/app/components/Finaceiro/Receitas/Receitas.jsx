@@ -29,6 +29,7 @@ import styles from "./Receitas.module.css";
 import { Select } from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useConfig } from "../../../../../context/ConfigContext";
+import Link from "next/link";
 
 export default function Receitas() {
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
@@ -308,8 +309,11 @@ export default function Receitas() {
                   <Tbody>
                     {mes.map((revenue) => (
                       <Tr key={revenue._id}>
+                         <Link href={`/admin/sales/${revenue.orderID}}`}>
+                         
                         <Td>{revenue.description}</Td>
                         <Td>{formatDate(revenue.paymentDate)}</Td>
+                         </Link>
                         <Td
                           className={
                             revenue.status === "RECEIVED"
@@ -340,6 +344,8 @@ export default function Receitas() {
                         >
                           <DeleteIcon />
                         </Td>
+                         
+                  
                       </Tr>
                     ))}
                   </Tbody>
