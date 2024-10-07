@@ -59,6 +59,7 @@ export default function SalesDetails({ id }) {
 
   return (
     <div>
+
       {data ? (
         <TableContainer className={styles.TableContainer}>
           <Table variant="simple">
