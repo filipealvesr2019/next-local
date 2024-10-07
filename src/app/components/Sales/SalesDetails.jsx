@@ -1,66 +1,99 @@
+"use client";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect, useState, useCallback } from "react";
-import styles from "./SalesDetails.module.css";
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  TableContainer,
+} from "@chakra-ui/react";
+import styles from "./Sales.module.css";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Button,
+} from "@chakra-ui/react";
 import Cookies from "js-cookie";
-import { useNavigate, useParams } from "react-router-dom";
-import { useConfig } from "../../../context/ConfigContext";
+import { useConfig } from "../../../../context/ConfigContext";
 
-export default function SalesDetails() {
+export default function SalesDetails({ id }) {
   const { apiUrl } = useConfig();
-  const [data, setData] = useState(null); // Alterado de [] para null
-  const [selectedVariations, setSelectedVariations] = useState({});
-  const [quantity, setQuantity] = useState(1); // Adicionado campo de quantidade
+  const [data, setData] = useState(null); // Alterado para null
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const AdminID = Cookies.get("AdminID");
-  const { productId } = useParams();
-  const [message, setMessage] = useState('');
-  const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
-  const navigate = useNavigate();
 
-
+  // Função para buscar os produtos
   async function getProducts() {
     try {
-      const response = await axios.get(`${apiUrl}/api/sale/${productId}`);
-      setData(response.data);
-      console.log(response.data);
+      const response = await axios.get(`${apiUrl}/api/admin/order/${id}`);
+      setData(response.data || {}); // Alterado para objeto
+      console.log("vendas", response.data);
     } catch (error) {
       console.error("Error fetching products:", error);
-      setData(null);
+      setData(null); // Mudei para null se houver erro
     }
   }
 
   useEffect(() => {
-    getProducts();
-  }, [apiUrl, productId]);
+    if (id) {
+      getProducts();
+    }
+  }, [id]);
 
- 
+  const formatDate = (isoDate) => {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   return (
-    <div style={{ marginTop: "2rem" }}>
+    <div>
       {data ? (
-        <div>
-          <h2>{data.name}</h2>
-          <img src={data.imageUrl} alt={data.name} style={{ width: "15vw" }} />
-          <div>
-            {data.variations && data.variations.length > 0 ? (
-              data.variations.map((variation, index) => (
-                <div key={index} className={styles.variationContainer}>
-                  <img src={variation.url} alt={variation.name} style={{ width: "15vw" }} />
-                  <p>{variation.name}</p>
-                  <p>R${variation.price}</p>
-                
-                </div>
-              ))
-            ) : (
-              <p>No variations available</p>
-            )}
-          </div>
-          
-       
-
-       
-          {message && <p>{message}</p>}
-        </div>
+        <TableContainer className={styles.TableContainer}>
+          <Table variant="simple">
+            <Thead>
+              <Tr>
+                <Th>Produto</Th>
+                <Th>Nome</Th>
+                <Th>Data</Th>
+                <Th>Status</Th>
+                <Th isNumeric>Preço</Th>
+              </Tr>
+            </Thead>
+            <Tbody className={styles.Tbody}>
+              {data.items && data.items.length > 0 ? (
+                data.items.map((item) => (
+                  <Tr key={item._id}>
+                    <Td>
+                      <img src={item.imageUrl} alt={item.name} style={{ width: '50px', height: '50px' }} />
+                    </Td>
+                    <Td>{item.name}</Td>
+                    <Td>{formatDate(data.purchaseDate)}</Td>
+                    <Td>{data.status}</Td>
+                    <Td isNumeric>{item.price.toFixed(2)}</Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={5}>Nenhum produto encontrado para este pedido.</Td>
+                </Tr>
+              )}
+            </Tbody>
+          </Table>
+        </TableContainer>
       ) : (
-        <p>No products available</p>
+        <p>Nenhum produto encontrado para este pedido.</p>
       )}
     </div>
   );

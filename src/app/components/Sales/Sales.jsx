@@ -39,6 +39,7 @@ export default function Sales({ storeID }) {
     try {
       const response = await axios.get(`${apiUrl}/api/admin/vendas/${storeID}`);
       setData(response.data || []);
+      console.log('vendas', response.data )
     } catch (error) {
       console.error("Error fetching products:", error);
       setData([]);
@@ -96,7 +97,6 @@ export default function Sales({ storeID }) {
             <Thead>
               <Tr>
                 <Th>Produto</Th>
-                <Th>Nome</Th>
                 <Th>Data</Th>
                 <Th>Status</Th>
                 <Th isNumeric>Preço</Th>
@@ -108,17 +108,13 @@ export default function Sales({ storeID }) {
                   <Td>
                     <Link href={`/admin/sales/${product._id}`}>
                       <img
-                        src={product.imageUrl}
+                        src={product.items[0].imageUrl}
                         alt={product.name}
                         style={{ width: "15vw" }}
                       />
                     </Link>
                   </Td>
-                  <Td>
-                    <Link href={`/admin/sales/${product._id}`}>
-                      {product.name}
-                    </Link>
-                  </Td>
+                 
                   <Td>{formatDate(product.purchaseDate)}</Td>
                   <Td
                     className={product.status === "RECEIVED" ? styles.received : styles.pending}
