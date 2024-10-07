@@ -18,14 +18,14 @@ import {
 } from "@chakra-ui/react";
 
 export default function PIX() {
-  const [qrcode, setQrcode] = useState("");
+  const [qrcode, setQrcode] = useState([]);
 
   const { apiUrl } = useConfig();
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
   useEffect(() => {
     async function getPix() {
       try {
-        const response = await axios.get(`${apiUrl}/api/pix/admin/${AdminID}`);
+        const response = await axios.get(`${apiUrl}/api/admin/pix-keys/${AdminID}`);
         setQrcode(response.data);
         console.log("qrcode", response.data);
       } catch (error) {
@@ -62,19 +62,21 @@ export default function PIX() {
           </Thead>
           <Tbody>
             {qrcode && (
-              <>
+qrcode.map((pix) => (
+  <>
+    <>
                 <Tr>
                   <Td>
-                    <img src={qrcode.qrCodeUrl} alt="" />
+                    <img src={pix.qrCodeUrl} alt="" />
                   </Td>
                   <Td>
-                    <span>{qrcode.pixKey}</span>
+                    <span>{pix.pixKey}</span>
                   </Td>
 
                   <Td>
                   
                   <a
-                    href={qrcode.qrCodeUrl}
+                    href={pix.qrCodeUrl}
                     download="qrcode_pix.png" // Nome do arquivo a ser baixado
                     style={{ width: "300px", height: "300px" }} // Aumenta o tamanho na tela
 
@@ -94,6 +96,9 @@ export default function PIX() {
                   </Td>
                 </Tr>
               </>
+  </>
+))
+            
             )}
           </Tbody>
         </Table>
