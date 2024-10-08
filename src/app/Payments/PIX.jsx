@@ -54,25 +54,32 @@ export default function PIX() {
     setDeleteQRCode({ _id: id });  // Certifique-se de passar apenas o _id
     onOpenDeleteModal();
   };
-  
-  // Função para buscar o PixKey selecionado no Ecommerce e os QR Codes
-  useEffect(() => {
-    async function getPixData() {
-      try {
-        // Buscar QR Codes do admin
-        const pixResponse = await axios.get(`${apiUrl}/api/admin/pix-keys/${AdminID}`);
-        setQrcode(pixResponse.data);
-         
-        // Buscar o ecommerce com o PixKey selecionado
-        const ecommerceResponse = await axios.get(`${apiUrl}/api/pix/admin/${AdminID}`);
-        setSelectedPixKey(ecommerceResponse.data.pixKey); // Define o PixKey selecionado
 
-      } catch (error) {
-        console.error("Error fetching pix keys or ecommerce data:", error);
-        setQrcode([]);
-      }
+ 
+  const fetchQRCode = async () => {
+    await getPixData(); // Call the function to fetch Pix data
+  };
+  
+
+  // Function to fetch Pix data
+  const getPixData = async () => {
+    try {
+      // Fetch QR Codes from admin
+      const pixResponse = await axios.get(`${apiUrl}/api/admin/pix-keys/${AdminID}`);
+      setQrcode(pixResponse.data);
+
+      // Fetch the ecommerce with the selected Pix key
+      const ecommerceResponse = await axios.get(`${apiUrl}/api/pix/admin/${AdminID}`);
+      setSelectedPixKey(ecommerceResponse.data.pixKey); // Set the selected Pix key
+
+    } catch (error) {
+      console.error("Error fetching pix keys or ecommerce data:", error);
+      setQrcode([]);
     }
-    getPixData();
+  };
+
+  useEffect(() => {
+    getPixData(); // Fetch data on component mount
   }, [AdminID, apiUrl]);
 
   // Função para selecionar e salvar o PixKey escolhido
@@ -114,7 +121,7 @@ export default function PIX() {
           marginTop: "10rem",
         }}
       >
-        <ModalPix />
+        <ModalPix onSuccess={fetchQRCode} />
         <Table variant="simple" style={{ backgroundColor: "white" }}>
           <Thead>
             <Tr>

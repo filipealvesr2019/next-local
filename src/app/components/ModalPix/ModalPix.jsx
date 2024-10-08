@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import axios from 'axios';
 import { useConfig } from '../../../../context/ConfigContext';
 
-export default function InitialFocus() {
+export default function InitialFocus({onSuccess}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const initialRef = React.useRef(null);
   const finalRef = React.useRef(null);
@@ -26,6 +26,7 @@ export default function InitialFocus() {
         pixKey,
         adminID: AdminID,
       });
+      onSuccess();
       setQrcode(response.data.qrCodeUrl);
       console.log("qrcode", response.data.qrCodeUrl);
     } catch (error) {
