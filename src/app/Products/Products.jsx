@@ -38,6 +38,12 @@ export default function Products() {
     onOpen: onOpenDeleteModal,
     onClose: onCloseDeleteModal,
   } = useDisclosure();
+
+  
+  const fetchProducts = async () => {
+    await getProducts();
+ 
+  };
   // console.log("adminEccommerceID", adminEccommerceID)
   async function getProducts() {
     try {
@@ -80,7 +86,7 @@ export default function Products() {
             marginTop: "10rem",
           }}
         >
-          <CreateProductsModal />
+          <CreateProductsModal  onSuccess={fetchProducts} />
           <TableContainer
             style={{
               border: "1px solid #edf2f7",
@@ -134,13 +140,13 @@ export default function Products() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Excluir QRCode</ModalHeader>
+          <ModalHeader>Excluir Produto</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <p>Tem certeza que deseja excluir esse QRCode?</p>
+            <p>Tem certeza que deseja excluir esse Produto?</p>
           </ModalBody>
-          <ModalFooter onClick={handleDeleteProduct}>
-            <Button colorScheme="blue" mr={3}>
+          <ModalFooter onClick={handleDeleteProduct} >
+            <Button colorScheme="blue" mr={3} onClick={onCloseDeleteModal}>
               Salvar
             </Button>
             <Button onClick={onCloseDeleteModal}>Cancelar</Button>
