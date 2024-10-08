@@ -6,6 +6,17 @@ import { Radio, RadioGroup, Stack } from '@chakra-ui/react'
 import Cookies from "js-cookie";
 import ModalPix from "../components/ModalPix/ModalPix";
 import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Button,
+} from "@chakra-ui/react";
+import {
   Table,
   Thead,
   Tbody,
@@ -20,7 +31,30 @@ export default function PIX() {
   const [selectedPixKey, setSelectedPixKey] = useState(null); // Pix selecionado
   const { apiUrl } = useConfig();
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
+  const {
+    isOpen: isStatusModalOpen,
+    onOpen: onOpenStatusModal,
+    onClose: onCloseStatusModal,
+  } = useDisclosure();
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
+  const [deleteQRCode, setDeleteQRCode] = useState(null);
 
+
+  const openStatusModal = (revenue) => {
+    setSelectedRevenue(revenue);
+    setNewStatus(revenue.status === "PENDING" ? "RECEIVED" : "PENDING");
+    onOpenStatusModal();
+  };
+
+  const openDeleteModal = (id) => {
+    setDeleteQRCode({ _id: id });  // Certifique-se de passar apenas o _id
+    onOpenDeleteModal();
+  };
+  
   // Função para buscar o PixKey selecionado no Ecommerce e os QR Codes
   useEffect(() => {
     async function getPixData() {
@@ -28,7 +62,7 @@ export default function PIX() {
         // Buscar QR Codes do admin
         const pixResponse = await axios.get(`${apiUrl}/api/admin/pix-keys/${AdminID}`);
         setQrcode(pixResponse.data);
-
+         
         // Buscar o ecommerce com o PixKey selecionado
         const ecommerceResponse = await axios.get(`${apiUrl}/api/pix/admin/${AdminID}`);
         setSelectedPixKey(ecommerceResponse.data.pixKey); // Define o PixKey selecionado
@@ -58,6 +92,19 @@ export default function PIX() {
     }
   };
 
+
+
+  const handleDeleteQRCode = async (id) => {
+    try {
+      await axios.delete(
+        `${apiUrl}/api/admin/pix-keys/${deleteQRCode._id}`
+      );
+      
+      onClose();
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
   return (
     <>
       <TableContainer
@@ -104,11 +151,14 @@ export default function PIX() {
                   <Td>
                     <a href={pix.qrCodeUrl} download="qrcode_pix.png">
                       <button>Baixar QR Code</button>
+                      
                     </a>
                   </Td>
                   <Td
+                  
                     style={{ color: "#C0392B", cursor: "pointer" }}
-                    onClick={() => console.log("Delete action")} // Implemente sua lógica de exclusão aqui
+                    onClick={() => openDeleteModal(pix._id)}
+
                   >
                     <DeleteIcon />
                   </Td>
@@ -122,6 +172,51 @@ export default function PIX() {
           </Tbody>
         </Table>
       </TableContainer>
+      
+      {/* Modal para confirmar a alteração de status */}
+      <Modal
+        // closeOnOverlayClick={false}
+        // isOpen={isStatusModalOpen}
+        // onClose={onCloseStatusModal}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Alterar Status</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p>
+              Tem certeza que deseja marcar esta receita como{" "}
+              <b></b>?
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} >
+              Salvar
+            </Button>
+            {/* <Button onClick={onCloseStatusModal}>Cancelar</Button> */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal para confirmar a exclusão de despesa */}
+      <Modal
+       isOpen={isDeleteModalOpen} onClose={onCloseDeleteModal}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Excluir QRCode</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p>Tem certeza que deseja excluir esse QRCode?</p>
+          </ModalBody>
+          <ModalFooter onClick={handleDeleteQRCode}>
+            <Button colorScheme="blue" mr={3} >
+              Salvar
+            </Button>
+            <Button onClick={onCloseDeleteModal}>Cancelar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }

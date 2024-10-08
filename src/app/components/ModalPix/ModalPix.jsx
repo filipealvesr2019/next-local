@@ -36,7 +36,7 @@ export default function InitialFocus() {
 
   return (
     <>
-      <Button onClick={onOpen}>Cadastrar Chave Pix</Button>
+      <Button onClick={onOpen}>Cadastrar Qr Code</Button>
 
       <Modal
         initialFocusRef={initialRef}
@@ -46,7 +46,7 @@ export default function InitialFocus() {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Crie um QRcode</ModalHeader>
+          <ModalHeader>Cadastrar Chave Pix ou Qr code</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
