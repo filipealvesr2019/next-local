@@ -30,11 +30,11 @@ export default function PIX() {
   const [qrcode, setQrcode] = useState([]); // Armazena todos os QR codes
   const [selectedPixKey, setSelectedPixKey] = useState(null); // Pix selecionado
   const { apiUrl } = useConfig();
-  const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
+  const AdminID = Cookies.get("AdminID");
   const {
-    isOpen: isStatusModalOpen,
-    onOpen: onOpenStatusModal,
-    onClose: onCloseStatusModal,
+    isOpen: isSelectModalOpen,
+    onOpen: onOpenSelectModal,
+    onClose: onCloseSelectModal,
   } = useDisclosure();
   const {
     isOpen: isDeleteModalOpen,
@@ -42,36 +42,29 @@ export default function PIX() {
     onClose: onCloseDeleteModal,
   } = useDisclosure();
   const [deleteQRCode, setDeleteQRCode] = useState(null);
+  const [tempSelectedPixKey, setTempSelectedPixKey] = useState(null); // Para armazenar o Pix temporariamente
 
-
-  const openStatusModal = (revenue) => {
-    setSelectedRevenue(revenue);
-    setNewStatus(revenue.status === "PENDING" ? "RECEIVED" : "PENDING");
-    onOpenStatusModal();
+  const openSelectModal = (pix) => {
+    setTempSelectedPixKey(pix); // Armazena temporariamente a chave Pix
+    onOpenSelectModal();
   };
 
   const openDeleteModal = (id) => {
-    setDeleteQRCode({ _id: id });  // Certifique-se de passar apenas o _id
+    setDeleteQRCode({ _id: id });
     onOpenDeleteModal();
   };
 
- 
   const fetchQRCode = async () => {
-    await getPixData(); // Call the function to fetch Pix data
+    await getPixData();
   };
-  
 
-  // Function to fetch Pix data
   const getPixData = async () => {
     try {
-      // Fetch QR Codes from admin
       const pixResponse = await axios.get(`${apiUrl}/api/admin/pix-keys/${AdminID}`);
       setQrcode(pixResponse.data);
 
-      // Fetch the ecommerce with the selected Pix key
       const ecommerceResponse = await axios.get(`${apiUrl}/api/pix/admin/${AdminID}`);
-      setSelectedPixKey(ecommerceResponse.data.pixKey); // Set the selected Pix key
-
+      setSelectedPixKey(ecommerceResponse.data.pixKey);
     } catch (error) {
       console.error("Error fetching pix keys or ecommerce data:", error);
       setQrcode([]);
@@ -79,15 +72,13 @@ export default function PIX() {
   };
 
   useEffect(() => {
-    getPixData(); // Fetch data on component mount
+    getPixData();
   }, [AdminID, apiUrl]);
 
-  // Função para selecionar e salvar o PixKey escolhido
   const handlePixSelection = async (pix) => {
     try {
-      setSelectedPixKey(pix.pixKey); // Define o PixKey selecionado no estado
+      setSelectedPixKey(pix.pixKey);
 
-      // Atualiza o ecommerce com o PixKey e QR Code selecionados
       await axios.put(`${apiUrl}/api/ecommerce/update-pix/${AdminID}`, {
         pixKey: pix.pixKey,
         qrCodeUrl: pix.qrCodeUrl
@@ -98,8 +89,6 @@ export default function PIX() {
       console.error("Erro ao salvar a chave Pix:", error);
     }
   };
-
-
 
   const handleDeleteQRCode = async (id) => {
     try {
@@ -112,6 +101,7 @@ export default function PIX() {
       console.error("Error updating status:", error);
     }
   };
+
   return (
     <>
       <TableContainer
@@ -140,11 +130,11 @@ export default function PIX() {
                     <RadioGroup value={selectedPixKey}>
                       <Stack direction="row">
                         <Radio
-                          value={pix.pixKey} // O valor é o pixKey
-                          onChange={() => handlePixSelection(pix)} // Seleciona o Pix
-                          isChecked={pix.pixKey === selectedPixKey} // Verifica se está selecionado
+                          value={pix.pixKey}
+                          onChange={() => openSelectModal(pix)} // Abre o modal ao selecionar
+                          isChecked={pix.pixKey === selectedPixKey}
                         >
-                       {pix.pixKey === selectedPixKey ? 'Selecionado' : 'Escolher?'}    
+                          {pix.pixKey === selectedPixKey ? 'Selecionado' : 'Escolher?'}
                         </Radio>
                       </Stack>
                     </RadioGroup>
@@ -158,14 +148,11 @@ export default function PIX() {
                   <Td>
                     <a href={pix.qrCodeUrl} download="qrcode_pix.png">
                       <button>Baixar QR Code</button>
-                      
                     </a>
                   </Td>
                   <Td
-                  
                     style={{ color: "#C0392B", cursor: "pointer" }}
                     onClick={() => openDeleteModal(pix._id)}
-
                   >
                     <DeleteIcon />
                   </Td>
@@ -180,27 +167,30 @@ export default function PIX() {
         </Table>
       </TableContainer>
       
-      {/* Modal para confirmar a alteração de status */}
+      {/* Modal para confirmar a alteração de QRCode */}
       <Modal
-        // closeOnOverlayClick={false}
-        // isOpen={isStatusModalOpen}
-        // onClose={onCloseStatusModal}
+        closeOnOverlayClick={false}
+        isOpen={isSelectModalOpen}
+        onClose={onCloseSelectModal}
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Alterar Status</ModalHeader>
+          <ModalHeader>Alterar QRCode</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <p>
-              Tem certeza que deseja marcar esta receita como{" "}
-              <b></b>?
+              Esse QR Code será escolhido como QR Code Principal de Pagamentos?{" "}
+              <b></b>
             </p>
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} >
+            <Button colorScheme="blue" mr={3} onClick={() => {
+                handlePixSelection(tempSelectedPixKey); // Salva a seleção
+                onCloseSelectModal(); // Fecha o modal
+            }}>
               Salvar
             </Button>
-            {/* <Button onClick={onCloseStatusModal}>Cancelar</Button> */}
+            <Button onClick={onCloseSelectModal}>Cancelar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -217,7 +207,7 @@ export default function PIX() {
             <p>Tem certeza que deseja excluir esse QRCode?</p>
           </ModalBody>
           <ModalFooter onClick={handleDeleteQRCode}>
-            <Button colorScheme="blue" mr={3} >
+            <Button colorScheme="blue" mr={3}>
               Salvar
             </Button>
             <Button onClick={onCloseDeleteModal}>Cancelar</Button>
