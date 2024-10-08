@@ -99,8 +99,8 @@ export default function PIX() {
       await axios.delete(
         `${apiUrl}/api/admin/pix-keys/${deleteQRCode._id}`
       );
-      
-      onClose();
+      setQrcode((prevQrcodes) => prevQrcodes.filter((pix) => pix._id !== deleteQRCode._id));
+      onCloseDeleteModal();
     } catch (error) {
       console.error("Error updating status:", error);
     }
