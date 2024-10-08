@@ -10,6 +10,15 @@ import {
   Th,
   Td,
   TableContainer,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
 } from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -21,7 +30,14 @@ export default function Products() {
 
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
+  const [deleteProduct, setDeleteProduct] = useState([]);
 
+  
+  const {
+    isOpen: isDeleteModalOpen,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal,
+  } = useDisclosure();
   // console.log("adminEccommerceID", adminEccommerceID)
   async function getProducts() {
     try {
@@ -36,7 +52,19 @@ export default function Products() {
   useEffect(() => {
     getProducts();
   }, []);
+  const openDeleteModal = (id) => {
+    setDeleteProduct({ _id: id });
+    onOpenDeleteModal();
+  };
 
+  const handleDeleteProduct = async (id) => {
+    try {
+      const response = await axios.delete(`${apiUrl}/api/product/${deleteProduct._id}`)
+      await  getProducts();
+    } catch (error){
+      console.log(error)
+    }
+  }
   return (
     <>
       <div
@@ -89,7 +117,7 @@ export default function Products() {
                       </Td>
                       <Td>R${product.price}</Td>
                      
-                      <Td style={{ color: "#C0392B", cursor: "pointer" }}>
+                      <Td style={{ color: "#C0392B", cursor: "pointer" }}    onClick={() => openDeleteModal(product._id)}>
                         <DeleteIcon />
                       </Td>
                     </Tr>
@@ -100,6 +128,25 @@ export default function Products() {
               </Tbody>
             </Table>
           </TableContainer>
+          {/* Modal para confirmar a exclusão de despesa */}
+      <Modal
+       isOpen={isDeleteModalOpen} onClose={onCloseDeleteModal}
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Excluir QRCode</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <p>Tem certeza que deseja excluir esse QRCode?</p>
+          </ModalBody>
+          <ModalFooter onClick={handleDeleteProduct}>
+            <Button colorScheme="blue" mr={3}>
+              Salvar
+            </Button>
+            <Button onClick={onCloseDeleteModal}>Cancelar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
         </div>
       </div>
     </>
