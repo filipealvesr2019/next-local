@@ -109,10 +109,12 @@ export default function PIX() {
           border: "1px solid #edf2f7",
           borderRadius: "10px",
           marginTop: "10rem",
+           maxHeight: '400px',
+        overflowY: 'auto'
         }}
       >
         <ModalPix onSuccess={fetchQRCode} />
-        <Table variant="simple" style={{ backgroundColor: "white" }}>
+        <Table variant="simple" style={{ backgroundColor: "white", }}>
           <Thead>
             <Tr>
               <Th>Escolha um QR Code</Th>
@@ -122,7 +124,7 @@ export default function PIX() {
               <Th>Excluir</Th>
             </Tr>
           </Thead>
-          <Tbody>
+          <Tbody >
             {qrcode.length > 0 ? (
               qrcode.map((pix) => (
                 <Tr key={pix._id}>
