@@ -17,6 +17,8 @@ import Link from "next/link";
 import StoreContainer from "../components/container/storeContainer";
 import Home from "../page";
 import Finaceiro from "../components/Finaceiro/Finaceiro";
+import Bairros from "../components/Bairros/Bairros";
+import Horario from "../components/Horario/Horario";
 
 const HomeIcon = () => (
   <svg className={styles.icon} viewBox="0 0 20 20" fill="currentColor">
@@ -163,10 +165,17 @@ const Sidebar = () => {
           </Flex>
           <Flex
             className={styles.sidebarItem}
-            onClick={() => setContent("Email")}
+            onClick={() => setContent("Bairros")}
           >
             <SettingsIcon />
-            <Text className={styles.itemText}>Email Marketing</Text>
+            <Text className={styles.itemText}>Bairros</Text>
+          </Flex>
+          <Flex
+            className={styles.sidebarItem}
+            onClick={() => setContent("Horario")}
+          >
+            <SettingsIcon />
+            <Text className={styles.itemText}>Horario</Text>
           </Flex>
         
           <Button
@@ -189,6 +198,8 @@ const Sidebar = () => {
           {/* {content === "Email" && <Email />} */}
           {content === "Finaceiro" && <Finaceiro />}
           {content === "Relatório" && <Finaceiro />}
+          {content === "Bairros" && <Bairros />}
+          {content === "Horario" && <Horario />}
 
           
            
