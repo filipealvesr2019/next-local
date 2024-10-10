@@ -20,6 +20,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { adminAuth } from "../../../context/AdminAuthProvider";
+import { useAuth } from "../context/UserAuthProvider";
 export default function Products() {
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
@@ -32,7 +33,7 @@ export default function Products() {
   const [isRegistered, setIsRegistered] = useState(false); // Armazena os dados do usuário
   const [error, setError] = useState(null); // Armazena qualquer erro
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {loggedIn} = adminAuth()
+  const { loggedIn } = useAuth();
   const {
     isOpen: isModalOFFLINEOpen,
     onOpen: onOpenOFFLINEModal,
@@ -46,7 +47,6 @@ export default function Products() {
       setData(response.data || []);
       console.log("isRegistered", isRegistered);
       console.log("loggedIn", loggedIn);
-
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
       setData([]);
@@ -92,16 +92,15 @@ export default function Products() {
   const toggleCartItem = async (productId, isAdding) => {
     const UserID = Cookies.get("UserID");
 
-    
-    if(!loggedIn ){
-      onOpenOFFLINEModal()
+    if (!loggedIn) {
+      onOpenOFFLINEModal();
     }
 
     // Se o usuário estiver logado, verifique se está registrado
-  if (!isRegistered) {
-    onOpen(); // Abra o modal de cadastro se isRegistered for null
-    return; // Saia da função para não continuar
-  }
+    if (!isRegistered) {
+      onOpen(); // Abra o modal de cadastro se isRegistered for null
+      return; // Saia da função para não continuar
+    }
     try {
       if (isAdding) {
         await axios.post(`${apiUrl}/api/add-to-cart/${UserID}/${productId}`, {
@@ -187,54 +186,55 @@ export default function Products() {
       ) : (
         <p>No products available</p>
       )}
+      {loggedIn ? (
+        <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Cadastre-se</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Por favor, para poder continuar com sua compra cadastre-se.{" "}
+            </ModalBody>
 
-      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Cadastre-se</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Por favor, para poder continuar com sua compra cadastre-se.{" "}
-          </ModalBody>
-
-          <ModalFooter>
-            <Link href={"/UserForm"}>
-              <Button colorScheme="blue" mr={3}>
-                Cadastrar
+            <ModalFooter>
+              <Link href={"/UserForm"}>
+                <Button colorScheme="blue" mr={3}>
+                  Cadastrar
+                </Button>
+              </Link>
+              <Button variant="ghost" onClick={onClose}>
+                Cancelar
               </Button>
-            </Link>
-            <Button variant="ghost" onClick={onClose}>
-              Cancelar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      {/* <Modal  closeOnOverlayClick={false}
-        isOpen={isModalOFFLINEOpen}
-        onClose={onCloseOFFLINEModal}
-        
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      ) : (
+        <Modal
+          closeOnOverlayClick={false}
+          isOpen={isModalOFFLINEOpen}
+          onClose={onCloseOFFLINEModal}
         >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Logar</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            Por favor, para poder continuar com sua compra faça login.{" "}
-          </ModalBody>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Logar</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Por favor, para poder continuar com sua compra faça login.{" "}
+            </ModalBody>
 
-          <ModalFooter>
-            <Link href={"/signin"}>
-              <Button colorScheme="blue" mr={3}>
-               Fazer Login 
+            <ModalFooter>
+              <Link href={"/signin"}>
+                <Button colorScheme="blue" mr={3}>
+                  Fazer Login
+                </Button>
+              </Link>
+              <Button variant="ghost" onClick={onCloseOFFLINEModal}>
+                Cancelar
               </Button>
-            </Link>
-            <Button variant="ghost" onClick={onCloseOFFLINEModal}>
-              Cancelar
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      */}
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
     </div>
   );
 }
