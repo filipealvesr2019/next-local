@@ -103,6 +103,7 @@ const LojaPage = ({store}) => {
 
   return (
     <>
+    
       <div className={styles.container}>
         <div className={styles.screenContainer}>
           <div

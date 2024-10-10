@@ -1,12 +1,13 @@
+"use client"
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from "js-cookie";
-import { useConfig } from '../context/ConfigContext';
 import { useAtom } from 'jotai';
 import { storeID } from '../../../store/store';
 import styles from "./SignUpForm.module.css"
+import { useConfig } from '../../../context/ConfigContext';
 
-const Signup = () => {
+const UserForm = () => {
   const { apiUrl } = useConfig();
   const [storeIDAtom, setStoreID] = useAtom(storeID);
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
@@ -138,4 +139,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default UserForm;

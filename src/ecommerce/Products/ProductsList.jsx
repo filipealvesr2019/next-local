@@ -6,17 +6,31 @@ import { useAtom } from "jotai";
 import { cartCountAtom, storeID } from "../../../store/store";
 import Cookies from "js-cookie";
 import Link from "next/link";
-import AddIcon from '@mui/icons-material/Add';
-import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import AddIcon from "@mui/icons-material/Add";
+import CheckCircleOutlinedIcon from "@mui/icons-material/CheckCircleOutlined";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  Button,
+} from "@chakra-ui/react";
 export default function Products() {
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
   const [selectedVariations, setSelectedVariations] = useState({});
   const [ecommerceID, setEcommerceID] = useAtom(storeID); // Use corretamente o atom
-  const [toggleIcon, setToggleIcon] = useState(false)
-  const [message, setMessage] = useState('');
+  const [toggleIcon, setToggleIcon] = useState(false);
+  const [message, setMessage] = useState("");
   const [cart, setCart] = useState(new Set()); // Estado para manter os IDs dos produtos no carrinho
   const [cartCount, setCartCount] = useAtom(cartCountAtom); // Use o atom de contagem
+  const [isRegistered, setIsRegistered] = useState(null); // Armazena os dados do usuário
+  const [error, setError] = useState(null); // Armazena qualquer erro
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   // Função para buscar produtos
   async function getProducts(id) {
@@ -31,8 +45,6 @@ export default function Products() {
   }
 
   useEffect(() => {
-   
-
     // Recupera o storeID do cookie
     const savedStoreID = Cookies.get("storeID");
 
@@ -58,7 +70,6 @@ export default function Products() {
       .replace(/[^\w\-]+/g, ""); // Remove caracteres não alfanuméricos (exceto hífens)
   };
 
-
   useEffect(() => {
     // Carregar estado do carrinho do localStorage
     const savedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -71,9 +82,12 @@ export default function Products() {
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
     const UserID = Cookies.get("UserID");
+    if (!isRegistered) {
+      onOpen();
+    }
     try {
       if (isAdding) {
-        await axios.post(`${apiUrl}/api/cart/${UserID}/${productId}`, {
+        await axios.post(`${apiUrl}/api/add-to-cart/${UserID}/${productId}`, {
           quantity: 1,
         });
         setCart((prev) => {
@@ -98,30 +112,86 @@ export default function Products() {
     }
   };
 
+  // Função que busca os dados do usuário
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/userForm/${UserID}`); // Substitua pelo userID dinâmico se necessário
 
+      setIsRegistered(response.data.isRegistered);
+      console.log("fetchUserData", response.data.isRegistered);
+    } catch (err) {
+      setError("Erro ao carregar os dados do usuário"); // Armazena o erro
+    }
+  };
 
+  // Executa a função de busca quando o componente é montado
+  useEffect(() => {
+    fetchUserData();
+  }, []);
   return (
-    <div style={{ marginTop: "25rem" }}>
+    <div style={{ marginTop: "15rem" }}>
       {data.length > 0 ? (
         data.map((product) => (
           <div key={product._id} style={{ marginTop: "10rem" }}>
-            
-            <Link href={`/user/product/${formatProductNameForURL(product.name)}/${product._id}`}>
+            <Link
+              href={`/user/product/${formatProductNameForURL(product.name)}/${
+                product._id
+              }`}
+            >
               <div>
                 {product.name}
-                <img src={product.imageUrl} alt={product.name} style={{ width: "15vw" }} />
+                <img
+                  src={product.imageUrl}
+                  alt={product.name}
+                  style={{ width: "15vw" }}
+                />
               </div>
             </Link>
-            <div onClick={() => toggleCartItem(product._id, !cart.has(product._id))}>
-              {cart.has(product._id) ?
-              (<><CheckCircleOutlinedIcon />remover</> ) :
-               (<> <AddIcon />adicionar</>) }
+            <div
+              onClick={() =>
+                toggleCartItem(product._id, !cart.has(product._id))
+              }
+            >
+              {cart.has(product._id) ? (
+                <>
+                  <CheckCircleOutlinedIcon />
+                  remover
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <AddIcon />
+                  adicionar
+                </>
+              )}
             </div>
           </div>
         ))
       ) : (
         <p>No products available</p>
       )}
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Cadastre-se</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Por favor, para poder continuar com sua compra cadastre-se.{" "}
+          </ModalBody>
+
+          <ModalFooter>
+            <Link href={"/UserForm"}>
+              <Button colorScheme="blue" mr={3}>
+                Cadastrar
+              </Button>
+            </Link>
+            <Button variant="ghost" onClick={onClose}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

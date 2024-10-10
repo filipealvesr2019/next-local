@@ -8,6 +8,7 @@ import { useConfig } from "../../../../context/ConfigContext";
 export default function StoreContainer() {
   const { apiUrl } = useConfig();
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do Admin
+  
   const [storeID, setStoreID] = useState(null); // Inicializa como null até ser recuperado
 
   async function handleGetEcommerce() {
