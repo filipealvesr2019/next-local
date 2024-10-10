@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import UserFormContainer from "../UserForm/UserFormContainer/UserFormContainer";
 import { adminAuth } from "../../../context/AdminAuthProvider";
+import { useAuth } from "../context/UserAuthProvider";
 export default function ProductDetails({ name, productId }) {
   const { apiUrl } = useConfig();
   const [data, setData] = useState(null); // Alterado de [] para null
@@ -31,17 +32,18 @@ export default function ProductDetails({ name, productId }) {
   const [cartCount, setCartCount] = useAtom(cartCountAtom); // Adicione esta linha
   const [isRegistered, setIsRegistered] = useState(null); // Armazena os dados do usuário
   const [error, setError] = useState(null); // Armazena qualquer erro
-  const {loggedIn} = adminAuth()
   const [message, setMessage] = useState("");
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
   const router = useRouter();
   const storeID = Cookies.get("storeID"); // Obtenha o ID do cliente do cookie
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
-    isOpen: isStatusModalOpen,
-    onOpen: onOpenStatusModal,
-    onClose: onCloseStatusModal,
+    isOpen: isModalOFFLINEOpen,
+    onOpen: onOpenOFFLINEModal,
+    onClose: onCloseOFFLINEModal,
   } = useDisclosure();
+  const { loggedIn } = useAuth();
+
   // Função para formatar o subdomínio
   const formatProductNameForURL = (str) => {
     return str
@@ -93,6 +95,12 @@ export default function ProductDetails({ name, productId }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!loggedIn) {
+      onOpenOFFLINEModal();
+    }
+
+
     if (!isRegistered && loggedIn) {
       onOpen();
     }
@@ -194,6 +202,55 @@ export default function ProductDetails({ name, productId }) {
         </div>
       ) : (
         <p>No products available</p>
+      )}
+        {loggedIn ? (
+        <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Cadastre-se</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Por favor, para poder continuar com sua compra cadastre-se.{" "}
+            </ModalBody>
+
+            <ModalFooter>
+              <Link href={"/UserForm"}>
+                <Button colorScheme="blue" mr={3}>
+                  Cadastrar
+                </Button>
+              </Link>
+              <Button variant="ghost" onClick={onClose}>
+                Cancelar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      ) : (
+        <Modal
+          closeOnOverlayClick={false}
+          isOpen={isModalOFFLINEOpen}
+          onClose={onCloseOFFLINEModal}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Logar</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Por favor, para poder continuar com sua compra faça login.{" "}
+            </ModalBody>
+
+            <ModalFooter>
+              <Link href={"/signin"}>
+                <Button colorScheme="blue" mr={3}>
+                  Fazer Login
+                </Button>
+              </Link>
+              <Button variant="ghost" onClick={onCloseOFFLINEModal}>
+                Cancelar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
       )}
     </div>
   );
