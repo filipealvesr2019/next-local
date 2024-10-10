@@ -19,6 +19,7 @@ import {
   useDisclosure,
   Button,
 } from "@chakra-ui/react";
+import { adminAuth } from "../../../context/AdminAuthProvider";
 export default function Products() {
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
@@ -28,16 +29,24 @@ export default function Products() {
   const [message, setMessage] = useState("");
   const [cart, setCart] = useState(new Set()); // Estado para manter os IDs dos produtos no carrinho
   const [cartCount, setCartCount] = useAtom(cartCountAtom); // Use o atom de contagem
-  const [isRegistered, setIsRegistered] = useState(null); // Armazena os dados do usuário
+  const [isRegistered, setIsRegistered] = useState(false); // Armazena os dados do usuário
   const [error, setError] = useState(null); // Armazena qualquer erro
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {loggedIn} = adminAuth()
+  const {
+    isOpen: isModalOFFLINEOpen,
+    onOpen: onOpenOFFLINEModal,
+    onClose: onCloseOFFLINEModal,
+  } = useDisclosure();
 
   // Função para buscar produtos
   async function getProducts(id) {
     try {
       const response = await axios.get(`${apiUrl}/api/produtos/loja/${id}`);
       setData(response.data || []);
-      console.log("Produtos", response.data);
+      console.log("isRegistered", isRegistered);
+      console.log("loggedIn", loggedIn);
+
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
       setData([]);
@@ -82,9 +91,17 @@ export default function Products() {
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
     const UserID = Cookies.get("UserID");
-    if (!isRegistered) {
-      onOpen();
+
+    
+    if(!loggedIn ){
+      onOpenOFFLINEModal()
     }
+
+    // Se o usuário estiver logado, verifique se está registrado
+  if (!isRegistered) {
+    onOpen(); // Abra o modal de cadastro se isRegistered for null
+    return; // Saia da função para não continuar
+  }
     try {
       if (isAdding) {
         await axios.post(`${apiUrl}/api/add-to-cart/${UserID}/${productId}`, {
@@ -171,7 +188,7 @@ export default function Products() {
         <p>No products available</p>
       )}
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Cadastre-se</ModalHeader>
@@ -192,6 +209,32 @@ export default function Products() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {/* <Modal  closeOnOverlayClick={false}
+        isOpen={isModalOFFLINEOpen}
+        onClose={onCloseOFFLINEModal}
+        
+        >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Logar</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            Por favor, para poder continuar com sua compra faça login.{" "}
+          </ModalBody>
+
+          <ModalFooter>
+            <Link href={"/signin"}>
+              <Button colorScheme="blue" mr={3}>
+               Fazer Login 
+              </Button>
+            </Link>
+            <Button variant="ghost" onClick={onCloseOFFLINEModal}>
+              Cancelar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+      */}
     </div>
   );
 }

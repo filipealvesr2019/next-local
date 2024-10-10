@@ -21,6 +21,7 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import UserFormContainer from "../UserForm/UserFormContainer/UserFormContainer";
+import { adminAuth } from "../../../context/AdminAuthProvider";
 export default function ProductDetails({ name, productId }) {
   const { apiUrl } = useConfig();
   const [data, setData] = useState(null); // Alterado de [] para null
@@ -30,13 +31,17 @@ export default function ProductDetails({ name, productId }) {
   const [cartCount, setCartCount] = useAtom(cartCountAtom); // Adicione esta linha
   const [isRegistered, setIsRegistered] = useState(null); // Armazena os dados do usuário
   const [error, setError] = useState(null); // Armazena qualquer erro
-
+  const {loggedIn} = adminAuth()
   const [message, setMessage] = useState("");
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
   const router = useRouter();
   const storeID = Cookies.get("storeID"); // Obtenha o ID do cliente do cookie
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const {
+    isOpen: isStatusModalOpen,
+    onOpen: onOpenStatusModal,
+    onClose: onCloseStatusModal,
+  } = useDisclosure();
   // Função para formatar o subdomínio
   const formatProductNameForURL = (str) => {
     return str
@@ -88,7 +93,7 @@ export default function ProductDetails({ name, productId }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isRegistered) {
+    if (!isRegistered && loggedIn) {
       onOpen();
     }
     const variationsArray = Object.values(selectedVariations);
