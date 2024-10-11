@@ -40,7 +40,7 @@ export default function Products() {
     onClose: onCloseOFFLINEModal,
   } = useDisclosure();
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
-
+  const [quantity, setQuantity] = useState(1)
   // Função para buscar produtos
   async function getProducts(id) {
     try {
@@ -180,6 +180,7 @@ export default function Products() {
                   adicionar
                 </>
               )}
+              
             </div>
           </div>
         ))
