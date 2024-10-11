@@ -39,14 +39,14 @@ export default function Products() {
     onOpen: onOpenOFFLINEModal,
     onClose: onCloseOFFLINEModal,
   } = useDisclosure();
+  const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
 
   // Função para buscar produtos
   async function getProducts(id) {
     try {
       const response = await axios.get(`${apiUrl}/api/produtos/loja/${id}`);
       setData(response.data || []);
-      console.log("isRegistered", isRegistered);
-      console.log("loggedIn", loggedIn);
+
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
       setData([]);
@@ -134,7 +134,7 @@ export default function Products() {
       const response = await axios.get(`${apiUrl}/api/userForm/${UserID}`); // Substitua pelo userID dinâmico se necessário
 
       setIsRegistered(response.data.isRegistered);
-      console.log("fetchUserData", response.data.isRegistered);
+      console.log("isRegistered", isRegistered);
     } catch (err) {
       setError("Erro ao carregar os dados do usuário"); // Armazena o erro
     }

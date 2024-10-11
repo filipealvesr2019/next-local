@@ -30,7 +30,7 @@ export default function ProductDetails({ name, productId }) {
   const [quantity, setQuantity] = useState(1); // Adicionado campo de quantidade
   const [paymentMethod, setPaymentMethod] = useState(""); // Estado para o método de pagamento
   const [cartCount, setCartCount] = useAtom(cartCountAtom); // Adicione esta linha
-  const [isRegistered, setIsRegistered] = useState(null); // Armazena os dados do usuário
+  const [isRegistered, setIsRegistered] = useState(false); // Armazena os dados do usuário
   const [error, setError] = useState(null); // Armazena qualquer erro
   const [message, setMessage] = useState("");
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
@@ -135,7 +135,7 @@ export default function ProductDetails({ name, productId }) {
       const response = await axios.get(`${apiUrl}/api/userForm/${UserID}`); // Substitua pelo userID dinâmico se necessário
 
       setIsRegistered(response.data.isRegistered);
-      console.log("fetchUserData", response.data.isRegistered);
+      console.log("isRegistered", response.data.isRegistered);
     } catch (err) {
       setError("Erro ao carregar os dados do usuário"); // Armazena o erro
     }
