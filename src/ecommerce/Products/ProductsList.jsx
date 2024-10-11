@@ -96,26 +96,33 @@ export default function Products() {
     setCartCount(savedCount);
   }, []);
 
-
-  // Função para verificar se a hora atual está dentro do horário de funcionamento
-const isWithinOperatingHours = (horario) => {
-  const now = new Date();
-  const currentHour = now.getHours();
-  const currentMinutes = now.getMinutes();
+  const isWithinOperatingHours = () => {
+    const now = new Date();
+    const currentDay = now.toLocaleString('pt-BR', { weekday: 'long' }).toLowerCase(); // Obtém o dia da semana em português
+    const currentHour = now.getHours();
+    const currentMinutes = now.getMinutes();
   
-  // Extrai as horas e minutos de abertura e fechamento
-  const [openingHour, openingMinutes] = horario.abertura.split(":").map(Number);
-  const [closingHour, closingMinutes] = horario.fechamento.split(":").map(Number);
-
-  // Converte tudo para minutos desde a meia-noite
-  const openingTime = openingHour * 60 + openingMinutes;
-  const closingTime = closingHour * 60 + closingMinutes;
-  const currentTime = currentHour * 60 + currentMinutes;
-
-  // Verifica se a hora atual está dentro do horário de funcionamento
-  return currentTime >= openingTime && currentTime < closingTime;
-};
-
+    // Obtém o horário de funcionamento para o dia atual
+    const horarioDia = horario[currentDay]; // Use 'horario' instead of 'horarioFuncionamento'
+  
+    // Verifica se há horário de funcionamento para o dia atual
+    if (!horarioDia) {
+      return false; // Se não há horário, retorna false
+    }
+  
+    // Extrai as horas e minutos de abertura e fechamento
+    const [openingHour, openingMinutes] = horarioDia.abertura.split(":").map(Number);
+    const [closingHour, closingMinutes] = horarioDia.fechamento.split(":").map(Number);
+  
+    // Converte tudo para minutos desde a meia-noite
+    const openingTime = openingHour * 60 + openingMinutes;
+    const closingTime = closingHour * 60 + closingMinutes;
+    const currentTime = currentHour * 60 + currentMinutes;
+  
+    // Verifica se a hora atual está dentro do horário de funcionamento
+    return currentTime >= openingTime && currentTime < closingTime;
+  };
+  
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
     const UserID = Cookies.get("UserID");
@@ -126,7 +133,8 @@ const isWithinOperatingHours = (horario) => {
 
     
   // Verifica se está dentro do horário de funcionamento
-  if (!isWithinOperatingHours(horario)) {
+  // Verifica se está dentro do horário de funcionamento
+  if (!isWithinOperatingHours()) { // Remova o parâmetro
     onOpenHoursModal();
     return; // Saia da função se não estiver dentro do horário
   }
@@ -298,33 +306,43 @@ const isWithinOperatingHours = (horario) => {
           </ModalContent>
         </Modal>
       )}
-
-
-      {horario && loggedIn ?  <Modal
-          closeOnOverlayClick={false}
-          isOpen={isHoursModalOpen}
-          onClose={onCloseHoursModal}
-        >
-          <ModalOverlay />
-          <ModalContent>
+{horario && loggedIn && !isWithinOperatingHours() && (
+    <Modal
+        closeOnOverlayClick={false}
+        isOpen={isHoursModalOpen}
+        onClose={onCloseHoursModal}
+    >
+        <ModalOverlay />
+        <ModalContent>
             <ModalHeader>Horário de Funcionamento</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-            Nossos horários de funcionamento são:
-
-Segunda a Sexta: {horario.abertura} - {horario.fechamento}
-Sábado: 09:00 - 14:00
-Domingo: Fechado
-Para qualquer dúvida ou assistência, não hesite em entrar em contato conosco durante nosso horário de atendimento. Agradecemos sua visita!            </ModalBody>
-
+                Nossos horários de funcionamento são:
+                <div>
+                    Segunda: {horario.segunda.abertura} - {horario.segunda.fechamento}
+                    <br />
+                    Terça: {horario.terca.abertura} - {horario.terca.fechamento}
+                    <br />
+                    Quarta: {horario.quarta.abertura} - {horario.quarta.fechamento}
+                    <br />
+                    Quinta: {horario.quinta.abertura} - {horario.quinta.fechamento}
+                    <br />
+                    Sexta: {horario.sexta.abertura} - {horario.sexta.fechamento}
+                    <br />
+                    Sábado: {horario.sabado.abertura} - {horario.sabado.fechamento}
+                    <br />
+                    Domingo: {horario.domingo.abertura} - {horario.domingo.fechamento}
+                </div>
+            </ModalBody>
             <ModalFooter>
-             
-              <Button variant="ghost" onClick={onCloseHoursModal}>
-                Cancelar
-              </Button>
+                <Button variant="ghost" onClick={onCloseHoursModal}>
+                    Fechar
+                </Button>
             </ModalFooter>
-          </ModalContent>
-        </Modal> : ''}
+        </ModalContent>
+    </Modal>
+)}
+
     </div>
   );
 }

@@ -16,11 +16,10 @@ import {
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useConfig } from "../../../../../context/ConfigContext";
+import styles from './HorarioModal.module.css'
 
 export default function HorarioModal({ onSuccess }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const initialRef = React.useRef(null);
-  const finalRef = React.useRef(null);
   const { apiUrl } = useConfig();
   const AdminID = Cookies.get("AdminID");
 
@@ -28,9 +27,15 @@ export default function HorarioModal({ onSuccess }) {
 
   const [formData, setFormData] = useState({
     adminID: AdminID,
-    storeID: null,
-    abertura: "",
-    fechamento: "",
+    horarios: {
+      segunda: { abertura: "", fechamento: "" },
+      terca: { abertura: "", fechamento: "" },
+      quarta: { abertura: "", fechamento: "" },
+      quinta: { abertura: "", fechamento: "" },
+      sexta: { abertura: "", fechamento: "" },
+      sabado: { abertura: "", fechamento: "" },
+      domingo: { abertura: "", fechamento: "" }
+    }
   });
 
   async function handleGetEcommerce() {
@@ -42,7 +47,7 @@ export default function HorarioModal({ onSuccess }) {
         storeID: response.data._id,
       }));
     } catch (error) {
-      console.error("Error showing ecommerce:", error);
+      console.error("Erro ao carregar loja:", error);
     }
   }
 
@@ -50,88 +55,71 @@ export default function HorarioModal({ onSuccess }) {
     handleGetEcommerce();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
+  const handleChange = (e, day, type) => {
+    const { value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      horarios: {
+        ...formData.horarios,
+        [day]: {
+          ...formData.horarios[day],
+          [type]: value,
+        },
+      },
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.storeID) {
-      alert("Store ID ainda não foi carregado.");
-      return;
-    }
-
     try {
-      const response = await axios.post(`${apiUrl}/api/admin/horario-funcionamento`, formData);
+      const response = await axios.post(`${apiUrl}/api/admin/horario-funcionamento`, {
+        adminID: formData.adminID,
+        horarios: formData.horarios
+      });
       onSuccess();
       alert(response.data.message);
     } catch (error) {
-      console.error("Error creating product:", error);
-      alert("Erro ao criar produto.");
+      console.error("Erro ao salvar horários:", error);
+      alert("Erro ao salvar horários.");
     }
   };
 
-  const [categories, setCategories] = useState([]);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/api/categories/${AdminID}`);
-        setCategories(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar categorias:", error);
-      }
-    };
-
-    fetchCategories();
-  }, [apiUrl, AdminID]);
-
   return (
     <>
-      <Button onClick={onOpen}>Cadastrar Horario</Button>
+      <Button onClick={onOpen}>Cadastrar Horário</Button>
 
-      <Modal
-        initialFocusRef={initialRef}
-        finalFocusRef={finalRef}
-        isOpen={isOpen}
-        onClose={onClose}
-      >
+      <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Cadastrar Horario</ModalHeader>
+          <ModalHeader>Cadastrar Horário de Funcionamento</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <form onSubmit={handleSubmit} style={{ marginTop: "5rem" }}>
-                <FormLabel>Abertura</FormLabel>
-                <Input
-                  type="time"
-                  name="abertura"
-                  value={formData.abertura}
-                  onChange={handleChange}
-                  required
-                />
-
-                <FormLabel>Fechamento</FormLabel>
-                <Input
-                  type="time"
-                  name="fechamento"
-                  value={formData.fechamento}
-                  onChange={handleChange}
-                  required
-                />
+              <form onSubmit={handleSubmit} className={styles.form}>
+                {Object.keys(formData.horarios).map((day) => (
+                  <div key={day} className={styles.dayRow}>
+                    <FormLabel>{day.charAt(0).toUpperCase() + day.slice(1)}</FormLabel>
+                    <Input
+                      type="time"
+                      value={formData.horarios[day].abertura}
+                      onChange={(e) => handleChange(e, day, "abertura")}
+                      required
+                    />
+                    <Input
+                      type="time"
+                      value={formData.horarios[day].fechamento}
+                      onChange={(e) => handleChange(e, day, "fechamento")}
+                      required
+                    />
+                  </div>
+                ))}
               </form>
             </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
+            <Button colorScheme="blue" onClick={handleSubmit}>
               Salvar
             </Button>
             <Button onClick={onClose}>Cancelar</Button>
