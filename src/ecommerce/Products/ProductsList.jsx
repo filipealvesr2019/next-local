@@ -39,8 +39,16 @@ export default function Products() {
     onOpen: onOpenOFFLINEModal,
     onClose: onCloseOFFLINEModal,
   } = useDisclosure();
+  const {
+    isOpen: isHoursModalOpen,
+    onOpen: onOpenHoursModal,
+    onClose: onCloseHoursModal,
+  } = useDisclosure();
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
-  const [quantity, setQuantity] = useState(1)
+  const [horario, setHorario] = useState(false);
+
+  const storeNAME = Cookies.get("storeNAME"); // Obtenha o ID do cliente do cookie
+
   // Função para buscar produtos
   async function getProducts(id) {
     try {
@@ -88,6 +96,26 @@ export default function Products() {
     setCartCount(savedCount);
   }, []);
 
+
+  // Função para verificar se a hora atual está dentro do horário de funcionamento
+const isWithinOperatingHours = (horario) => {
+  const now = new Date();
+  const currentHour = now.getHours();
+  const currentMinutes = now.getMinutes();
+  
+  // Extrai as horas e minutos de abertura e fechamento
+  const [openingHour, openingMinutes] = horario.abertura.split(":").map(Number);
+  const [closingHour, closingMinutes] = horario.fechamento.split(":").map(Number);
+
+  // Converte tudo para minutos desde a meia-noite
+  const openingTime = openingHour * 60 + openingMinutes;
+  const closingTime = closingHour * 60 + closingMinutes;
+  const currentTime = currentHour * 60 + currentMinutes;
+
+  // Verifica se a hora atual está dentro do horário de funcionamento
+  return currentTime >= openingTime && currentTime < closingTime;
+};
+
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
     const UserID = Cookies.get("UserID");
@@ -96,6 +124,12 @@ export default function Products() {
       onOpenOFFLINEModal();
     }
 
+    
+  // Verifica se está dentro do horário de funcionamento
+  if (!isWithinOperatingHours(horario)) {
+    onOpenHoursModal();
+    return; // Saia da função se não estiver dentro do horário
+  }
     // Se o usuário estiver logado, verifique se está registrado
     if (!isRegistered) {
       onOpen(); // Abra o modal de cadastro se isRegistered for null
@@ -140,10 +174,37 @@ export default function Products() {
     }
   };
 
+
+  
   // Executa a função de busca quando o componente é montado
   useEffect(() => {
     fetchUserData();
   }, []);
+
+
+
+    useEffect(() => {
+        const fetchEcommerce = async () => {
+            if (!storeNAME) {
+                console.error("storeNAME não encontrado no cookie.");
+                return;
+            }
+
+            console.log("API URL:", apiUrl);
+            
+            try {
+                const response = await axios.get(`${apiUrl}/api/loja/${storeNAME}`);
+                setHorario(response.data.horarioFuncionamento);
+                console.log("horarioFuncionamento", response.data.horarioFuncionamento);
+            } catch (error) {
+                console.error("Erro ao buscar o e-commerce:", error);
+            }
+        };
+
+        fetchEcommerce();
+    }, [apiUrl, storeNAME]); // Adicione dependências
+
+
   return (
     <div style={{ marginTop: "15rem" }}>
       {data.length > 0 ? (
@@ -187,6 +248,7 @@ export default function Products() {
       ) : (
         <p>No products available</p>
       )}
+
       {loggedIn ? (
         <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
@@ -236,6 +298,33 @@ export default function Products() {
           </ModalContent>
         </Modal>
       )}
+
+
+      {horario && loggedIn ?  <Modal
+          closeOnOverlayClick={false}
+          isOpen={isHoursModalOpen}
+          onClose={onCloseHoursModal}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Horário de Funcionamento</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+            Nossos horários de funcionamento são:
+
+Segunda a Sexta: {horario.abertura} - {horario.fechamento}
+Sábado: 09:00 - 14:00
+Domingo: Fechado
+Para qualquer dúvida ou assistência, não hesite em entrar em contato conosco durante nosso horário de atendimento. Agradecemos sua visita!            </ModalBody>
+
+            <ModalFooter>
+             
+              <Button variant="ghost" onClick={onCloseHoursModal}>
+                Cancelar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal> : ''}
     </div>
   );
 }
