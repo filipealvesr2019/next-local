@@ -95,34 +95,32 @@ export default function Products() {
     setCart(new Set(savedCart));
     setCartCount(savedCount);
   }, []);
-
   const isWithinOperatingHours = () => {
     const now = new Date();
     const currentDay = now.toLocaleString('pt-BR', { weekday: 'long' }).toLowerCase(); // Obtém o dia da semana em português
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
-  
-    // Obtém o horário de funcionamento para o dia atual
-    const horarioDia = horario[currentDay]; // Use 'horario' instead of 'horarioFuncionamento'
-  
-    // Verifica se há horário de funcionamento para o dia atual
-    if (!horarioDia) {
-      return false; // Se não há horário, retorna false
+
+    // Verifica se 'horario' está definido e contém o dia atual
+    if (!horario || !horario[currentDay]) {
+        return false; // Se não há horário de funcionamento definido para o dia atual
     }
-  
+
+    const horarioDia = horario[currentDay];
+
     // Extrai as horas e minutos de abertura e fechamento
     const [openingHour, openingMinutes] = horarioDia.abertura.split(":").map(Number);
     const [closingHour, closingMinutes] = horarioDia.fechamento.split(":").map(Number);
-  
+
     // Converte tudo para minutos desde a meia-noite
     const openingTime = openingHour * 60 + openingMinutes;
     const closingTime = closingHour * 60 + closingMinutes;
     const currentTime = currentHour * 60 + currentMinutes;
-  
+
     // Verifica se a hora atual está dentro do horário de funcionamento
     return currentTime >= openingTime && currentTime < closingTime;
-  };
-  
+};
+
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
     const UserID = Cookies.get("UserID");
