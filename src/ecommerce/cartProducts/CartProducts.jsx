@@ -139,9 +139,9 @@ export default function CartProducts() {
             <label>
               <input
                 type="radio"
-                value="Cartão de Credito"
-                checked={paymentMethod === "Cartão de Credito"}
-                onChange={() => setPaymentMethod("Cartão de Credito")}
+                value="Cartao"
+                checked={paymentMethod === "Cartao"}
+                onChange={() => setPaymentMethod("Cartao")}
               />
               Cartão de Crédito
             </label>
