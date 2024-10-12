@@ -54,7 +54,9 @@ export default function Products() {
     try {
       const response = await axios.get(`${apiUrl}/api/produtos/loja/${id}`);
       setData(response.data || []);
-
+      console.log("isRegistered:", isRegistered);
+      console.log("loggedIn:", loggedIn);
+      
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
       setData([]);
@@ -145,9 +147,8 @@ export default function Products() {
     return; // Saia da função se não estiver dentro do horário
   }
     // Se o usuário estiver logado, verifique se está registrado
-    if (!isRegistered) {
-      onOpen(); // Abra o modal de cadastro se isRegistered for null
-      return; // Saia da função para não continuar
+    if (!isRegistered && loggedIn) {
+      onOpen();
     }
     try {
       if (isAdding) {
@@ -189,7 +190,13 @@ export default function Products() {
   };
 
 
-  
+  const handleAddClick = () => {
+    if (loggedIn && !isRegistered) {
+      onOpen(); // Abre o modal se o usuário estiver logado, mas não registrado
+    } else {
+      // Logica para adicionar ao carrinho ou prosseguir normalmente
+    }
+  };
   // Executa a função de busca quando o componente é montado
   useEffect(() => {
     fetchUserData();
@@ -249,11 +256,11 @@ export default function Products() {
                   remover
                 </>
               ) : (
-                <>
+                <div onClick={handleAddClick}>
                   {" "}
-                  <AddIcon />
+                  <AddIcon  />
                   adicionar
-                </>
+                </div>
               )}
               
             </div>
