@@ -95,31 +95,39 @@ export default function Products() {
     setCart(new Set(savedCart));
     setCartCount(savedCount);
   }, []);
+
+
+
+
   const isWithinOperatingHours = () => {
     const now = new Date();
-    const currentDay = now.toLocaleString('pt-BR', { weekday: 'long' }).toLowerCase(); // Obtém o dia da semana em português
+    const currentDay = now.toLocaleString('pt-BR', { weekday: 'long' }).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    
     const currentHour = now.getHours();
     const currentMinutes = now.getMinutes();
 
-    // Verifica se 'horario' está definido e contém o dia atual
+    console.log(`Dia atual: ${currentDay}`);
+    console.log(`Hora atual: ${currentHour}`);
+    console.log(`Minutos atuais: ${currentMinutes}`);
+
     if (!horario || !horario[currentDay]) {
-        return false; // Se não há horário de funcionamento definido para o dia atual
+        console.log(`Horário não definido para ${currentDay}`);
+        return false;
     }
 
     const horarioDia = horario[currentDay];
+    console.log(`Horário de ${currentDay}:`, horarioDia);
 
-    // Extrai as horas e minutos de abertura e fechamento
     const [openingHour, openingMinutes] = horarioDia.abertura.split(":").map(Number);
     const [closingHour, closingMinutes] = horarioDia.fechamento.split(":").map(Number);
 
-    // Converte tudo para minutos desde a meia-noite
     const openingTime = openingHour * 60 + openingMinutes;
     const closingTime = closingHour * 60 + closingMinutes;
     const currentTime = currentHour * 60 + currentMinutes;
 
-    // Verifica se a hora atual está dentro do horário de funcionamento
     return currentTime >= openingTime && currentTime < closingTime;
 };
+
 
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
