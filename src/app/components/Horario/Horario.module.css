@@ -1,0 +1,11 @@
+.FormControl{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px; /* Ajuste o espaçamento entre os elementos */
+    width: 38vw;
+    align-items: center;
+
+}
+.Input{
+    width: 8vw;
+}

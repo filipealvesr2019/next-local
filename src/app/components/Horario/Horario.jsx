@@ -20,24 +20,40 @@ import {
   ModalBody,
   ModalFooter,
   Button,
+  FormControl,
+  Input,
+  FormLabel,
 } from "@chakra-ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useConfig } from "../../../../context/ConfigContext";
 import HorarioModal from "./Modal/HorarioModal";
 import EditIcon from "@mui/icons-material/Edit";
+import styles from "./Horario.module.css";
+import { Select } from "@chakra-ui/react";
 export default function Horario() {
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
 
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
   const [deleteProduct, setDeleteProduct] = useState([]);
+  const [segunda, setSegunda] = useState('')
+  const [terca, setTerca] = useState('')
 
   const {
     isOpen: isDeleteModalOpen,
     onOpen: onOpenDeleteModal,
     onClose: onCloseDeleteModal,
   } = useDisclosure();
+
+  const {
+    isOpen: isUpdateModalOpen,
+    onOpen: onOpenUpdateModal,
+    onClose: onCloseUpdateModal,
+  } = useDisclosure();
+  const openUpdateModal = () => {
+    onOpenUpdateModal();
+  };
 
   const fetchProducts = async () => {
     await getProducts();
@@ -49,7 +65,9 @@ export default function Horario() {
         `${apiUrl}/api/admin/horario-funcionamento/${AdminID}`
       );
       setData(response.data.horarioFuncionamento || []);
-      console.log("HorarioModal", response.data.horarioFuncionamento);
+      setSegunda(response.data.horarioFuncionamento.segunda.isOpen);
+      setTerca(response.data.horarioFuncionamento.terca.isOpen);
+
     } catch (error) {
       console.error("Error fetching products:", error);
       setData([]);
@@ -151,7 +169,7 @@ export default function Horario() {
                   </Td>
 
                   <Td p={2}>
-                    <EditIcon />
+                    <EditIcon onClick={() => openUpdateModal()} />
                     {data.length < 0 ? (
                       ""
                     ) : (
@@ -180,6 +198,64 @@ export default function Horario() {
                   Salvar
                 </Button>
                 <Button onClick={onCloseDeleteModal}>Cancelar</Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          {/* Modal para confirmar a exclusão de despesa */}
+          <Modal isOpen={isUpdateModalOpen} onClose={onCloseUpdateModal} size={'xl'}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Atualizar Horário de Funcionamento</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <FormControl className={styles.FormControl}>
+                <FormLabel>Segunda</FormLabel>
+
+                  <Input
+                    type="time"
+                    value={data?.segunda?.abertura}
+                    required
+                    className={styles.Input}
+                  />
+                  <Input
+                    type="time"
+                    value={data?.segunda?.fechamento}
+                    required
+                    className={styles.Input}
+                  />
+                  <Select placeholder="Esta Fechado?" value={segunda === true ? 'true' : 'false'} onChange={(e) => setSegunda(e.target.value)}>
+                  <option value="true">Aberto</option>
+                  <option value="false">Fechado</option>
+                  </Select>
+
+                  <FormLabel>Terça</FormLabel>
+
+                  <Input
+                    type="time"
+                    value={data?.terca?.abertura}
+                    required
+                    className={styles.Input}
+                    mb={1} /* Aplicando também no segundo Input */
+                  />
+                  <Input
+                    type="time"
+                    value={data?.terca?.fechamento}
+                    required
+                    className={styles.Input}
+                  />
+                    <Select placeholder="Esta Fechado?" value={terca === true ? 'true' : 'false'} onChange={(e) => setSegunda(e.target.value)}>
+                  <option value="true">Aberto</option>
+                  <option value="false">Fechado</option>
+                  </Select>
+
+                </FormControl>
+              </ModalBody>
+              <ModalFooter onClick={handleDeleteProduct}>
+                <Button colorScheme="blue" mr={3} onClick={onCloseUpdateModal}>
+                  Salvar
+                </Button>
+                <Button onClick={onCloseUpdateModal}>Cancelar</Button>
               </ModalFooter>
             </ModalContent>
           </Modal>
