@@ -39,11 +39,7 @@ export default function Horario() {
   const [deleteProduct, setDeleteProduct] = useState([]);
   const [segunda, setSegunda] = useState('')
   const [terca, setTerca] = useState('')
-  const [quarta, setQuarta] = useState('');
-  const [quinta, setQuinta] = useState('');
-  const [sexta, setSexta] = useState('');
-  const [sabado, setSabado] = useState('');
-  const [domingo, setDomingo] = useState('');
+
   const {
     isOpen: isDeleteModalOpen,
     onOpen: onOpenDeleteModal,
@@ -70,12 +66,8 @@ export default function Horario() {
       );
       setData(response.data.horarioFuncionamento || []);
       setSegunda(response.data.horarioFuncionamento.segunda.isOpen);
-      setTerca(response.data.horarioFuncionamento.terca.isOpen);
-      setQuarta(response.data.horarioFuncionamento.quarta.isOpen);
-      setQuinta(response.data.horarioFuncionamento.quinta.isOpen);
-      setSexta(response.data.horarioFuncionamento.sexta.isOpen);
-      setSabado(response.data.horarioFuncionamento.sabado.isOpen);
-      setDomingo(response.data.horarioFuncionamento.domingo.isOpen);
+      setSegunda(response.data.horarioFuncionamento.segunda.isOpen);
+
     } catch (error) {
       console.error("Error fetching products:", error);
       setData([]);
@@ -127,67 +119,32 @@ export default function Horario() {
             <Table variant="simple" style={{ backgroundColor: "white" }}>
               <Thead>
                 <Tr>
-                  <Th p={2}>Segunda</Th>
-                  <Th p={2}>Terça</Th>
-                  <Th p={2}>Quarta</Th>
-                  <Th p={2}>Quinta</Th>
-                  <Th p={2}>Sexta</Th>
-                  <Th p={2}>Sábado</Th>
-                  <Th p={2}>Domingo</Th>
-                  <Th p={2}>Excluir</Th>
+                  <Th >Dia</Th>
+                  <Th >Abertura</Th>
+                  <Th p={1}>Fechamento</Th>
+                  <Th >Status</Th>
+                  <Th >Editar</Th>
+                  <Th >Excluir</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td p={2}>
-                    {data?.segunda
-                      ? `${data.segunda.abertura} - ${data.segunda.fechamento}`
-                      : "Fechado"}
-                  </Td>
-                  <Td p={2}>
-                    {data?.terca
-                      ? `${data.terca.abertura} - ${data.terca.fechamento}`
-                      : "Fechado"}
-                  </Td>
-                  <Td p={2}>
-                    {data?.quarta
-                      ? `${data.quarta.abertura} - ${data.quarta.fechamento}`
-                      : "Fechado"}
-                  </Td>
-                  <Td p={2}>
-                    {data?.quinta
-                      ? `${data.quinta.abertura} - ${data.quinta.fechamento}`
-                      : "Fechado"}
-                  </Td>
-                  <Td p={2}>
-                    {data?.sexta
-                      ? `${data.sexta.abertura} - ${data.sexta.fechamento}`
-                      : "Fechado"}
-                  </Td>
-                  <Td p={2}>
-                    {data?.sabado
-                      ? `${data.sabado.abertura} - ${data.sabado.fechamento}`
-                      : "Fechado"}
-                  </Td>
-
-                  <Td p={2}>
-                    {data?.domingo?.isOpen
-                      ? `${data.domingo.abertura} - ${data.domingo.fechamento}`
-                      : "Fechado"}
-                  </Td>
-
-                  <Td p={2}>
-                    <EditIcon onClick={() => openUpdateModal()} />
-                    {data.length < 0 ? (
-                      ""
-                    ) : (
+                {["segunda", "terca", "quarta", "quinta", "sexta", "sabado", "domingo"].map((dia) => (
+                  <Tr key={dia}>
+                    <Td >{dia.charAt(0).toUpperCase() + dia.slice(1)}</Td>
+                    <Td  >{data[dia]?.abertura || "Fechado"}</Td>
+                    <Td p={1}>{data[dia]?.fechamento || "Fechado"}</Td>
+                    <Td >{data[dia]?.isOpen ? "Aberto" : "Fechado"}</Td>
+                    <Td >
+                      <EditIcon onClick={() => openUpdateModal(data[dia])} />
+                    </Td>
+                    <Td >
                       <DeleteIcon
                         style={{ color: "#C0392B", cursor: "pointer" }}
-                        onClick={() => openDeleteModal()}
+                        onClick={() => openDeleteModal(data[dia]?._id)}
                       />
-                    )}
-                  </Td>
-                </Tr>
+                    </Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </TableContainer>
@@ -211,24 +168,6 @@ export default function Horario() {
           </Modal>
 
           {/* Modal para confirmar a exclusão de despesa */}
-          <Modal isOpen={isDeleteModalOpen} onClose={onCloseDeleteModal}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Excluir Produto</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <p>Tem certeza que deseja excluir esse Produto?</p>
-              </ModalBody>
-              <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={handleDeleteProduct}>
-                  Salvar
-                </Button>
-                <Button onClick={onCloseDeleteModal}>Cancelar</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
-
-          {/* Modal para atualizar horário */}
           <Modal isOpen={isUpdateModalOpen} onClose={onCloseUpdateModal} size={'xl'}>
             <ModalOverlay />
             <ModalContent>
@@ -236,73 +175,45 @@ export default function Horario() {
               <ModalCloseButton />
               <ModalBody>
                 <FormControl className={styles.FormControl}>
-                  {/* Segunda */}
-                  <FormLabel>Segunda</FormLabel>
-                  <Input type="time" value={data?.segunda?.abertura} required className={styles.Input} />
-                  <Input type="time" value={data?.segunda?.fechamento} required className={styles.Input} />
-                  <Select placeholder="Esta Fechado?" value={segunda} onChange={(e) => setSegunda(e.target.value)}>
-                    <option value="true">Aberto</option>
-                    <option value="false">Fechado</option>
+                <FormLabel>Segunda</FormLabel>
+
+                  <Input
+                    type="time"
+                    value={data?.segunda?.abertura}
+                    required
+                    className={styles.Input}
+                  />
+                  <Input
+                    type="time"
+                    value={data?.segunda?.fechamento}
+                    required
+                    className={styles.Input}
+                  />
+                  <Select placeholder="Esta Fechado?" value={segunda === true ? 'true' : 'false'} onChange={(e) => setSegunda(e.target.value)}>
+                  <option value="true">Aberto</option>
+                  <option value="false">Fechado</option>
                   </Select>
 
-                  {/* Terça */}
                   <FormLabel>Terça</FormLabel>
-                  <Input type="time" value={data?.terca?.abertura} required className={styles.Input} mb={1} />
-                  <Input type="time" value={data?.terca?.fechamento} required className={styles.Input} />
-                  <Select placeholder="Esta Fechado?" value={terca} onChange={(e) => setTerca(e.target.value)}>
-                    <option value="true">Aberto</option>
-                    <option value="false">Fechado</option>
-                  </Select>
 
-                  {/* Quarta */}
-                  <FormLabel>Quarta</FormLabel>
-                  <Input type="time" value={data?.quarta?.abertura} required className={styles.Input} mb={1} />
-                  <Input type="time" value={data?.quarta?.fechamento} required className={styles.Input} />
-                  <Select placeholder="Esta Fechado?" value={quarta} onChange={(e) => setQuarta(e.target.value)}>
-                    <option value="true">Aberto</option>
-                    <option value="false">Fechado</option>
-                  </Select>
-
-                  {/* Quinta */}
-                  <FormLabel>Quinta</FormLabel>
-                  <Input type="time" value={data?.quinta?.abertura} required className={styles.Input} mb={1} />
-                  <Input type="time" value={data?.quinta?.fechamento} required className={styles.Input} />
-                  <Select placeholder="Esta Fechado?" value={quinta} onChange={(e) => setQuinta(e.target.value)}>
-                    <option value="true">Aberto</option>
-                    <option value="false">Fechado</option>
-                  </Select>
-
-                  {/* Sexta */}
-                  <FormLabel>Sexta</FormLabel>
-                  <Input type="time" value={data?.sexta?.abertura} required className={styles.Input} mb={1} />
-                  <Input type="time" value={data?.sexta?.fechamento} required className={styles.Input} />
-                  <Select placeholder="Esta Fechado?" value={sexta} onChange={(e) => setSexta(e.target.value)}>
-                    <option value="true">Aberto</option>
-                    <option value="false">Fechado</option>
-                  </Select>
-
-                  {/* Sábado */}
-                  <FormLabel>Sábado</FormLabel>
-                  <Input type="time" value={data?.sabado?.abertura} required className={styles.Input} mb={1} />
-                  <Input type="time" value={data?.sabado?.fechamento} required className={styles.Input} />
-                  <Select placeholder="Esta Fechado?" value={sabado} onChange={(e) => setSabado(e.target.value)}>
-                    <option value="true">Aberto</option>
-                    <option value="false">Fechado</option>
-                  </Select>
-
-                  {/* Domingo */}
-                  <FormLabel>Domingo</FormLabel>
-                  <Input type="time" value={data?.domingo?.abertura} required className={styles.Input} mb={1} />
-                  <Input type="time" value={data?.domingo?.fechamento} required className={styles.Input} />
-                  <Select placeholder="Esta Fechado?" value={domingo} onChange={(e) => setDomingo(e.target.value)}>
-                    <option value="true">Aberto</option>
-                    <option value="false">Fechado</option>
-                  </Select>
+                  <Input
+                    type="time"
+                    value={data?.segunda?.abertura}
+                    required
+                    className={styles.Input}
+                    mb={1} /* Aplicando também no segundo Input */
+                  />
+                  <Input
+                    type="time"
+                    value={data?.segunda?.fechamento}
+                    required
+                    className={styles.Input}
+                  />
                 </FormControl>
               </ModalBody>
-              <ModalFooter>
-                <Button colorScheme="blue" mr={3} >
-                  Atualizar
+              <ModalFooter onClick={handleDeleteProduct}>
+                <Button colorScheme="blue" mr={3} onClick={onCloseUpdateModal}>
+                  Salvar
                 </Button>
                 <Button onClick={onCloseUpdateModal}>Cancelar</Button>
               </ModalFooter>
