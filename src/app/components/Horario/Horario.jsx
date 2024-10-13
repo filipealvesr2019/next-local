@@ -39,7 +39,11 @@ export default function Horario() {
   const [deleteProduct, setDeleteProduct] = useState([]);
   const [segunda, setSegunda] = useState('')
   const [terca, setTerca] = useState('')
-
+  const [quarta, setQuarta] = useState('');
+  const [quinta, setQuinta] = useState('');
+  const [sexta, setSexta] = useState('');
+  const [sabado, setSabado] = useState('');
+  const [domingo, setDomingo] = useState('');
   const {
     isOpen: isDeleteModalOpen,
     onOpen: onOpenDeleteModal,
@@ -67,7 +71,11 @@ export default function Horario() {
       setData(response.data.horarioFuncionamento || []);
       setSegunda(response.data.horarioFuncionamento.segunda.isOpen);
       setTerca(response.data.horarioFuncionamento.terca.isOpen);
-
+      setQuarta(response.data.horarioFuncionamento.quarta.isOpen);
+      setQuinta(response.data.horarioFuncionamento.quinta.isOpen);
+      setSexta(response.data.horarioFuncionamento.sexta.isOpen);
+      setSabado(response.data.horarioFuncionamento.sabado.isOpen);
+      setDomingo(response.data.horarioFuncionamento.domingo.isOpen);
     } catch (error) {
       console.error("Error fetching products:", error);
       setData([]);
@@ -203,6 +211,24 @@ export default function Horario() {
           </Modal>
 
           {/* Modal para confirmar a exclusão de despesa */}
+          <Modal isOpen={isDeleteModalOpen} onClose={onCloseDeleteModal}>
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Excluir Produto</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <p>Tem certeza que deseja excluir esse Produto?</p>
+              </ModalBody>
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} onClick={handleDeleteProduct}>
+                  Salvar
+                </Button>
+                <Button onClick={onCloseDeleteModal}>Cancelar</Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          {/* Modal para atualizar horário */}
           <Modal isOpen={isUpdateModalOpen} onClose={onCloseUpdateModal} size={'xl'}>
             <ModalOverlay />
             <ModalContent>
@@ -210,50 +236,73 @@ export default function Horario() {
               <ModalCloseButton />
               <ModalBody>
                 <FormControl className={styles.FormControl}>
-                <FormLabel>Segunda</FormLabel>
-
-                  <Input
-                    type="time"
-                    value={data?.segunda?.abertura}
-                    required
-                    className={styles.Input}
-                  />
-                  <Input
-                    type="time"
-                    value={data?.segunda?.fechamento}
-                    required
-                    className={styles.Input}
-                  />
-                  <Select placeholder="Esta Fechado?" value={segunda === true ? 'true' : 'false'} onChange={(e) => setSegunda(e.target.value)}>
-                  <option value="true">Aberto</option>
-                  <option value="false">Fechado</option>
+                  {/* Segunda */}
+                  <FormLabel>Segunda</FormLabel>
+                  <Input type="time" value={data?.segunda?.abertura} required className={styles.Input} />
+                  <Input type="time" value={data?.segunda?.fechamento} required className={styles.Input} />
+                  <Select placeholder="Esta Fechado?" value={segunda} onChange={(e) => setSegunda(e.target.value)}>
+                    <option value="true">Aberto</option>
+                    <option value="false">Fechado</option>
                   </Select>
 
+                  {/* Terça */}
                   <FormLabel>Terça</FormLabel>
-
-                  <Input
-                    type="time"
-                    value={data?.terca?.abertura}
-                    required
-                    className={styles.Input}
-                    mb={1} /* Aplicando também no segundo Input */
-                  />
-                  <Input
-                    type="time"
-                    value={data?.terca?.fechamento}
-                    required
-                    className={styles.Input}
-                  />
-                    <Select placeholder="Esta Fechado?" value={terca === true ? 'true' : 'false'} onChange={(e) => setSegunda(e.target.value)}>
-                  <option value="true">Aberto</option>
-                  <option value="false">Fechado</option>
+                  <Input type="time" value={data?.terca?.abertura} required className={styles.Input} mb={1} />
+                  <Input type="time" value={data?.terca?.fechamento} required className={styles.Input} />
+                  <Select placeholder="Esta Fechado?" value={terca} onChange={(e) => setTerca(e.target.value)}>
+                    <option value="true">Aberto</option>
+                    <option value="false">Fechado</option>
                   </Select>
 
+                  {/* Quarta */}
+                  <FormLabel>Quarta</FormLabel>
+                  <Input type="time" value={data?.quarta?.abertura} required className={styles.Input} mb={1} />
+                  <Input type="time" value={data?.quarta?.fechamento} required className={styles.Input} />
+                  <Select placeholder="Esta Fechado?" value={quarta} onChange={(e) => setQuarta(e.target.value)}>
+                    <option value="true">Aberto</option>
+                    <option value="false">Fechado</option>
+                  </Select>
+
+                  {/* Quinta */}
+                  <FormLabel>Quinta</FormLabel>
+                  <Input type="time" value={data?.quinta?.abertura} required className={styles.Input} mb={1} />
+                  <Input type="time" value={data?.quinta?.fechamento} required className={styles.Input} />
+                  <Select placeholder="Esta Fechado?" value={quinta} onChange={(e) => setQuinta(e.target.value)}>
+                    <option value="true">Aberto</option>
+                    <option value="false">Fechado</option>
+                  </Select>
+
+                  {/* Sexta */}
+                  <FormLabel>Sexta</FormLabel>
+                  <Input type="time" value={data?.sexta?.abertura} required className={styles.Input} mb={1} />
+                  <Input type="time" value={data?.sexta?.fechamento} required className={styles.Input} />
+                  <Select placeholder="Esta Fechado?" value={sexta} onChange={(e) => setSexta(e.target.value)}>
+                    <option value="true">Aberto</option>
+                    <option value="false">Fechado</option>
+                  </Select>
+
+                  {/* Sábado */}
+                  <FormLabel>Sábado</FormLabel>
+                  <Input type="time" value={data?.sabado?.abertura} required className={styles.Input} mb={1} />
+                  <Input type="time" value={data?.sabado?.fechamento} required className={styles.Input} />
+                  <Select placeholder="Esta Fechado?" value={sabado} onChange={(e) => setSabado(e.target.value)}>
+                    <option value="true">Aberto</option>
+                    <option value="false">Fechado</option>
+                  </Select>
+
+                  {/* Domingo */}
+                  <FormLabel>Domingo</FormLabel>
+                  <Input type="time" value={data?.domingo?.abertura} required className={styles.Input} mb={1} />
+                  <Input type="time" value={data?.domingo?.fechamento} required className={styles.Input} />
+                  <Select placeholder="Esta Fechado?" value={domingo} onChange={(e) => setDomingo(e.target.value)}>
+                    <option value="true">Aberto</option>
+                    <option value="false">Fechado</option>
+                  </Select>
                 </FormControl>
               </ModalBody>
-              <ModalFooter onClick={handleDeleteProduct}>
-                <Button colorScheme="blue" mr={3} onClick={onCloseUpdateModal}>
-                  Salvar
+              <ModalFooter>
+                <Button colorScheme="blue" mr={3} >
+                  Atualizar
                 </Button>
                 <Button onClick={onCloseUpdateModal}>Cancelar</Button>
               </ModalFooter>
