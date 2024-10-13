@@ -25,6 +25,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useConfig } from "../../../../context/ConfigContext";
 import HorarioModal from "./Modal/HorarioModal";
+import EditIcon from '@mui/icons-material/Edit';
 export default function Horario() {
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do cliente do cookie
 
@@ -114,29 +115,35 @@ export default function Horario() {
     </Thead>
     <Tbody>
       <Tr>
-        <Td p={3}>
+        <Td p={2}>
           {data?.segunda ? `${data.segunda.abertura} - ${data.segunda.fechamento}` : "Fechado"}
         </Td>
-        <Td p={3}>
+        <Td p={2}>
           {data?.terca ? `${data.terca.abertura} - ${data.terca.fechamento}` : "Fechado"}
         </Td>
-        <Td p={3}>
+        <Td p={2}>
           {data?.quarta ? `${data.quarta.abertura} - ${data.quarta.fechamento}` : "Fechado"}
         </Td>
-        <Td p={3}>
+        <Td p={2}>
           {data?.quinta ? `${data.quinta.abertura} - ${data.quinta.fechamento}` : "Fechado"}
         </Td>
-        <Td p={3}>
+        <Td p={2}>
           {data?.sexta ? `${data.sexta.abertura} - ${data.sexta.fechamento}` : "Fechado"}
         </Td>
-        <Td p={3}>
+        <Td p={2}>
           {data?.sabado ? `${data.sabado.abertura} - ${data.sabado.fechamento}` : "Fechado"}
         </Td>
-        <Td p={3}>
-          {data?.domingo ? `${data.domingo.abertura} - ${data.domingo.fechamento}` : "Fechado"}
-        </Td>
-        <Td p={3} style={{ color: "#C0392B", cursor: "pointer" }} onClick={() => openDeleteModal()}>
-          {data.length < 0 ? "" : <DeleteIcon />}
+        
+        <Td p={2}>
+  {data?.domingo?.isOpen 
+    ? `${data.domingo.abertura} - ${data.domingo.fechamento}` 
+    : "Fechado"}
+</Td>
+
+        <Td p={2} >
+        <EditIcon />
+          {data.length < 0 ? "" : <DeleteIcon style={{ color: "#C0392B", cursor: "pointer" }}  onClick={() => openDeleteModal()} />}
+        
         </Td>
       </Tr>
     </Tbody>
