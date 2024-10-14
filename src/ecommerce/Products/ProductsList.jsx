@@ -56,7 +56,6 @@ export default function Products() {
       setData(response.data || []);
       console.log("isRegistered:", isRegistered);
       console.log("loggedIn:", loggedIn);
-      
     } catch (error) {
       console.error("Erro ao buscar produtos:", error);
       setData([]);
@@ -101,23 +100,23 @@ export default function Products() {
   const isWithinOperatingHours = () => {
     const now = new Date();
     const currentDay = now
-        .toLocaleString("pt-BR", { weekday: "long" })
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, ""); // Normalização do dia
+      .toLocaleString("pt-BR", { weekday: "long" })
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, ""); // Normalização do dia
 
     // Log para verificar o valor de currentDay
     console.log(`Valor original do dia: ${currentDay}`);
 
     // Mapeia o dia atual para a chave correta no objeto horario
     const diasDaSemanaMap = {
-        "segunda-feira": "segunda", // Alterado para corresponder à chave correta
-        "terça-feira": "terca", 
-        "quarta-feira": "quarta",
-        "quinta-feira": "quinta",
-        "sexta-feira": "sexta",
-        "sábado": "sabado",
-        "domingo": "domingo"
+      "segunda-feira": "segunda", // Alterado para corresponder à chave correta
+      "terça-feira": "terca",
+      "quarta-feira": "quarta",
+      "quinta-feira": "quinta",
+      "sexta-feira": "sexta",
+      sábado: "sabado",
+      domingo: "domingo",
     };
 
     const diaAtual = diasDaSemanaMap[currentDay]; // Mapeia o dia atual para a chave correta
@@ -129,22 +128,22 @@ export default function Products() {
 
     // Verifica se o horário está definido para o dia atual
     if (!horario || !horario[diaAtual]) {
-        console.log(`Horário não definido para ${diaAtual}`);
-        return false; // Se não houver horário, retorna falso
+      console.log(`Horário não definido para ${diaAtual}`);
+      return false; // Se não houver horário, retorna falso
     }
 
     const { abertura, fechamento, isOpen } = horario[diaAtual];
 
     // Verifica se a loja está aberta
     if (!isOpen) {
-        console.log(`A loja está fechada hoje, ${diaAtual}.`);
-        return false;
+      console.log(`A loja está fechada hoje, ${diaAtual}.`);
+      return false;
     }
 
     // Valida se os horários de abertura e fechamento estão definidos
     if (!abertura || !fechamento) {
-        console.log(`Horário não definido para ${diaAtual}`);
-        return false; // Se algum horário não estiver definido, retorna falso
+      console.log(`Horário não definido para ${diaAtual}`);
+      return false; // Se algum horário não estiver definido, retorna falso
     }
 
     const [openingHour, openingMinutes] = abertura.split(":").map(Number);
@@ -155,14 +154,11 @@ export default function Products() {
 
     // Ajustar a lógica para lidar com horários de fechamento que ocorrem no dia seguinte
     if (closingTime < openingTime) {
-        return currentTime >= openingTime || currentTime < closingTime;
+      return currentTime >= openingTime || currentTime < closingTime;
     }
 
     return currentTime >= openingTime && currentTime < closingTime;
-};
-
-
-
+  };
 
   // Função para adicionar/remover do carrinho
   const toggleCartItem = async (productId, isAdding) => {
@@ -172,13 +168,13 @@ export default function Products() {
       onOpenOFFLINEModal();
     }
 
-    
-  // Verifica se está dentro do horário de funcionamento
-  // Verifica se está dentro do horário de funcionamento
-  if (!isWithinOperatingHours() && horario) { // Remova o parâmetro
-    onOpenHoursModal();
-    return; // Saia da função se não estiver dentro do horário
-  }
+    // Verifica se está dentro do horário de funcionamento
+    // Verifica se está dentro do horário de funcionamento
+    if (!isWithinOperatingHours() && horario) {
+      // Remova o parâmetro
+      onOpenHoursModal();
+      return; // Saia da função se não estiver dentro do horário
+    }
     // Se o usuário estiver logado, verifique se está registrado
     if (!isRegistered && loggedIn) {
       onOpen();
@@ -222,7 +218,6 @@ export default function Products() {
     }
   };
 
-
   const handleAddClick = () => {
     if (loggedIn && !isRegistered) {
       onOpen(); // Abre o modal se o usuário estiver logado, mas não registrado
@@ -235,31 +230,26 @@ export default function Products() {
     fetchUserData();
   }, []);
 
+  useEffect(() => {
+    const fetchEcommerce = async () => {
+      if (!storeNAME) {
+        console.error("storeNAME não encontrado no cookie.");
+        return;
+      }
 
+      console.log("API URL:", apiUrl);
 
-    useEffect(() => {
-        const fetchEcommerce = async () => {
-            if (!storeNAME) {
-                console.error("storeNAME não encontrado no cookie.");
-                return;
-            }
+      try {
+        const response = await axios.get(`${apiUrl}/api/loja/${storeNAME}`);
+        setHorario(response.data.horarioFuncionamento);
+        console.log("horarioFuncionamento", response.data.horarioFuncionamento);
+      } catch (error) {
+        console.error("Erro ao buscar o e-commerce:", error);
+      }
+    };
 
-            console.log("API URL:", apiUrl);
-            
-            try {
-                const response = await axios.get(`${apiUrl}/api/loja/${storeNAME}`);
-                setHorario(response.data.horarioFuncionamento);
-                console.log("horarioFuncionamento", response.data.horarioFuncionamento);
-                
-            } catch (error) {
-              
-                console.error("Erro ao buscar o e-commerce:", error);
-            }
-        };
-
-        fetchEcommerce();
-    }, [apiUrl, storeNAME]); // Adicione dependências
-
+    fetchEcommerce();
+  }, [apiUrl, storeNAME]); // Adicione dependências
 
   return (
     <div style={{ marginTop: "15rem" }}>
@@ -293,11 +283,10 @@ export default function Products() {
               ) : (
                 <div onClick={handleAddClick}>
                   {" "}
-                  <AddIcon  />
+                  <AddIcon />
                   adicionar
                 </div>
               )}
-              
             </div>
           </div>
         ))
@@ -354,43 +343,91 @@ export default function Products() {
           </ModalContent>
         </Modal>
       )}
-{horario && loggedIn && !isWithinOperatingHours() && (
-    <Modal
-        closeOnOverlayClick={false}
-        isOpen={isHoursModalOpen}
-        onClose={onCloseHoursModal}
-    >
-        <ModalOverlay />
-        <ModalContent>
+      {horario && loggedIn && !isWithinOperatingHours() && (
+        <Modal
+          closeOnOverlayClick={false}
+          isOpen={isHoursModalOpen}
+          onClose={onCloseHoursModal}
+        >
+          <ModalOverlay />
+          <ModalContent>
             <ModalHeader>Horário de Funcionamento</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-                Nossos horários de funcionamento são:
-                <div>
-                    Segunda: {horario.segunda.abertura} - {horario.segunda.fechamento}
-                    <br />
-                    Terça: {horario.terca.abertura} - {horario.terca.fechamento}
-                    <br />
-                    Quarta: {horario.quarta.abertura} - {horario.quarta.fechamento}
-                    <br />
-                    Quinta: {horario.quinta.abertura} - {horario.quinta.fechamento}
-                    <br />
-                    Sexta: {horario.sexta.abertura} - {horario.sexta.fechamento}
-                    <br />
-                    Sábado: {horario.sabado.abertura} - {horario.sabado.fechamento}
-                    <br />
-                    Domingo: {horario.domingo.abertura} - {horario.domingo.fechamento}
-                </div>
+              Nossos horários de funcionamento são:
+              <div>
+                Segunda:{" "}
+                {horario.segunda.isOpen ? (
+                  <>
+                    {horario.segunda.abertura} - {horario.segunda.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Terça:{" "}
+                {horario.terca.isOpen ? (
+                  <>
+                    {horario.terca.abertura} - {horario.terca.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Quarta:{" "}
+                {horario.quarta.isOpen ? (
+                  <>
+                    {horario.quarta.abertura} - {horario.quarta.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Quinta:{" "}
+                {horario.quinta.isOpen ? (
+                  <>
+                    {horario.quinta.abertura} - {horario.quinta.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Sexta:{" "}
+                {horario.sexta.isOpen ? (
+                  <>
+                    {horario.sexta.abertura} - {horario.sexta.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Sábado:{" "}
+                {horario.sabado.isOpen ? (
+                  <>
+                    {horario.sabado.abertura} - {horario.sabado.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Domingo:{" "}
+                {horario.domingo.isOpen ? (
+                  <>
+                    {horario.domingo.abertura} - {horario.domingo.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+              </div>
             </ModalBody>
             <ModalFooter>
-                <Button variant="ghost" onClick={onCloseHoursModal}>
-                    Fechar
-                </Button>
+              <Button variant="ghost" onClick={onCloseHoursModal}>
+                Fechar
+              </Button>
             </ModalFooter>
-        </ModalContent>
-    </Modal>
-)}
-
+          </ModalContent>
+        </Modal>
+      )}
     </div>
   );
 }
