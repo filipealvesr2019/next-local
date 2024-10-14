@@ -37,8 +37,8 @@ export default function Horario() {
   const { apiUrl } = useConfig();
   const [data, setData] = useState([]);
   const [deleteProduct, setDeleteProduct] = useState([]);
-  const [segunda, setSegunda] = useState('')
-  const [terca, setTerca] = useState('')
+  const [segunda, setSegunda] = useState("");
+  const [terca, setTerca] = useState("");
 
   const {
     isOpen: isDeleteModalOpen,
@@ -67,7 +67,6 @@ export default function Horario() {
       setData(response.data.horarioFuncionamento || []);
       setSegunda(response.data.horarioFuncionamento.segunda.isOpen);
       setSegunda(response.data.horarioFuncionamento.segunda.isOpen);
-
     } catch (error) {
       console.error("Error fetching products:", error);
       setData([]);
@@ -107,8 +106,7 @@ export default function Horario() {
       console.error("Error updating horarios:", error);
     }
   };
-  
-  
+
   return (
     <>
       <div
@@ -137,25 +135,33 @@ export default function Horario() {
             <Table variant="simple" style={{ backgroundColor: "white" }}>
               <Thead>
                 <Tr>
-                  <Th >Dia</Th>
-                  <Th >Abertura</Th>
+                  <Th>Dia</Th>
+                  <Th>Abertura</Th>
                   <Th p={1}>Fechamento</Th>
-                  <Th >Status</Th>
-                  <Th >Editar</Th>
-                  <Th >Excluir</Th>
+                  <Th>Status</Th>
+                  <Th>Editar</Th>
+                  <Th>Excluir</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {["segunda", "terca", "quarta", "quinta", "sexta", "sabado", "domingo"].map((dia) => (
+                {[
+                  "segunda",
+                  "terca",
+                  "quarta",
+                  "quinta",
+                  "sexta",
+                  "sabado",
+                  "domingo",
+                ].map((dia) => (
                   <Tr key={dia}>
-                    <Td >{dia.charAt(0).toUpperCase() + dia.slice(1)}</Td>
-                    <Td  >{data[dia]?.abertura || "Fechado"}</Td>
-                    <Td p={1}>{data[dia]?.fechamento || "Fechado"}</Td>
-                    <Td >{data[dia]?.isOpen ? "Aberto" : "Fechado"}</Td>
-                    <Td >
+                    <Td>{dia.charAt(0).toUpperCase() + dia.slice(1)}</Td>
+                    <Td>{data[dia]?.abertura || "Fechado"}h</Td>
+                    <Td p={1}>{data[dia]?.fechamento || "Fechado"}h</Td>
+                    <Td className={data[dia]?.isOpen ? styles.open : styles.close }>{data[dia]?.isOpen ? "Aberto" : "Fechado"}</Td>
+                    <Td>
                       <EditIcon onClick={() => openUpdateModal(data[dia])} />
                     </Td>
-                    <Td >
+                    <Td>
                       <DeleteIcon
                         style={{ color: "#C0392B", cursor: "pointer" }}
                         onClick={() => openDeleteModal(data[dia]?._id)}
@@ -186,59 +192,133 @@ export default function Horario() {
           </Modal>
 
           {/* Modal para confirmar a exclusão de despesa */}
-          <Modal isOpen={isUpdateModalOpen} onClose={onCloseUpdateModal} size={'xl'}>
-  <ModalOverlay />
-  <ModalContent>
-    <ModalHeader>Atualizar Horário de Funcionamento</ModalHeader>
-    <ModalCloseButton />
-    <ModalBody>
-      <FormControl className={styles.FormControl}>
-        {["segunda", "terca", "quarta", "quinta", "sexta", "sabado", "domingo"].map((dia) => (
-          <div key={dia}>
-            <FormLabel>{dia.charAt(0).toUpperCase() + dia.slice(1)}</FormLabel>
-            <Input
-              type="time"
-              value={data[dia]?.abertura || ""}
-              onChange={(e) => setData((prev) => ({
-                ...prev,
-                [dia]: { ...prev[dia], abertura: e.target.value },
-              }))}
-              required
-              className={styles.Input}
-            />
-            <Input
-              type="time"
-              value={data[dia]?.fechamento || ""}
-              onChange={(e) => setData((prev) => ({
-                ...prev,
-                [dia]: { ...prev[dia], fechamento: e.target.value },
-              }))}
-              required
-              className={styles.Input}
-            />
-            <Select
-              value={data[dia]?.isOpen ? "true" : "false"}
-              onChange={(e) => setData((prev) => ({
-                ...prev,
-                [dia]: { ...prev[dia], isOpen: e.target.value === "true" },
-              }))}
-            >
-              <option value="true">Aberto</option>
-              <option value="false">Fechado</option>
-            </Select>
-          </div>
-        ))}
-      </FormControl>
-    </ModalBody>
-    <ModalFooter>
-      <Button colorScheme="blue" mr={3} onClick={handleUpdateHorarios}>
-        Salvar
-      </Button>
-      <Button onClick={onCloseUpdateModal}>Cancelar</Button>
-    </ModalFooter>
-  </ModalContent>
-</Modal>
-
+          <Modal
+            isOpen={isUpdateModalOpen}
+            onClose={onCloseUpdateModal}
+            size={"2xl"}
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Atualizar Horário de Funcionamento</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <FormControl>
+                  <div className={styles.FormControl}>
+                    {" "}
+                    <h1
+                      style={{
+                        fontFamily:
+                          " -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                        marginBottom: "1rem",
+                        fontWeight: "600",
+                        color: "#4a5568",
+                      }}
+                    >
+                      DIA
+                    </h1>
+                    <h1
+                      style={{
+                        fontFamily:
+                          " -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                        marginBottom: "1rem",
+                        fontWeight: "600",
+                        color: "#4a5568",
+                      }}
+                    >
+                      Abertura
+                    </h1>
+                    <h1
+                      style={{
+                        fontFamily:
+                          " -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                        marginBottom: "1rem",
+                        fontWeight: "600",
+                        color: "#4a5568",
+                      }}
+                    >
+                      Fechamento
+                    </h1>
+                    <h1
+                      style={{
+                        fontFamily:
+                          " -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol",
+                        marginBottom: "1rem",
+                        fontWeight: "600",
+                        color: "#4a5568",
+                      }}
+                    >
+                      Status
+                    </h1>
+                    
+                  </div>
+                  {[
+                    "segunda",
+                    "terca",
+                    "quarta",
+                    "quinta",
+                    "sexta",
+                    "sabado",
+                    "domingo",
+                  ].map((dia) => (
+                    <div key={dia} className={styles.FormControl}>
+                      <FormLabel>
+                        {dia.charAt(0).toUpperCase() + dia.slice(1)}
+                      </FormLabel>
+                      <Input
+                        type="time"
+                        value={data[dia]?.abertura || ""}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            [dia]: { ...prev[dia], abertura: e.target.value },
+                          }))
+                        }
+                        required
+                        className={styles.Input}
+                      />
+                      <Input
+                        type="time"
+                        value={data[dia]?.fechamento || ""}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            [dia]: { ...prev[dia], fechamento: e.target.value },
+                          }))
+                        }
+                        required
+                        className={styles.Input}
+                      />
+                      <Select
+                        value={data[dia]?.isOpen ? "true" : "false"}
+                        onChange={(e) =>
+                          setData((prev) => ({
+                            ...prev,
+                            [dia]: {
+                              ...prev[dia],
+                              isOpen: e.target.value === "true",
+                            },
+                          }))
+                        }
+                      >
+                        <option value="true">Aberto</option>
+                        <option value="false">Fechado</option>
+                      </Select>
+                    </div>
+                  ))}
+                </FormControl>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  colorScheme="blue"
+                  mr={3}
+                  onClick={handleUpdateHorarios}
+                >
+                  Salvar
+                </Button>
+                <Button onClick={onCloseUpdateModal}>Cancelar</Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
         </div>
       </div>
     </>

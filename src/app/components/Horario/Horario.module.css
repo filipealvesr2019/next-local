@@ -2,10 +2,21 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 30px; /* Ajuste o espaçamento entre os elementos */
-    width: 38vw;
+    width: 40vw;
     align-items: center;
+    justify-content: center;
 
 }
 .Input{
     width: 8vw;
+    justify-self: center;
+}
+.close{
+    color: rgb(192, 57, 43);
+    font-weight: 600;
+}
+.open{
+    color: #239B22;
+    font-weight: 600;
+
 }
