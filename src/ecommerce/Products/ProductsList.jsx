@@ -175,7 +175,7 @@ export default function Products() {
     
   // Verifica se está dentro do horário de funcionamento
   // Verifica se está dentro do horário de funcionamento
-  if (!isWithinOperatingHours() ) { // Remova o parâmetro
+  if (!isWithinOperatingHours() && horario) { // Remova o parâmetro
     onOpenHoursModal();
     return; // Saia da função se não estiver dentro do horário
   }
