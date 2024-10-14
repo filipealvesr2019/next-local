@@ -98,24 +98,27 @@ const UserForm = () => {
       }
     }
   };
-
   const handleCepChange = async (event) => {
     const newCep = event.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
-    
+      
     setFormData({ ...formData, postalCode: newCep });
-
+  
     if (newCep.length === 8) {
       try {
         const response = await axios.get(`https://viacep.com.br/ws/${newCep}/json/`);
         const data = response.data;
         if (!data.erro) {
-          // Verifica se o bairro retornado está entre os bairros válidos
-          const bairroEncontrado = bairros.find(b => b.bairro.toLowerCase() === data.bairro.toLowerCase());
+          // Verifica se o bairro, cidade e estado retornados correspondem
+          const bairroEncontrado = bairros.find(b => 
+            b.bairro.toLowerCase() === data.bairro.toLowerCase() &&
+            b.cidade.toLowerCase() === data.localidade.toLowerCase() &&
+            b.estado.toLowerCase() === data.uf.toLowerCase()
+          );
           
           if (!bairroEncontrado) {
             setBairroValido(false);
             setShowCEP(false);
-            alert('Desculpe, ainda não cobrimos o seu bairro.');
+            alert('Desculpe, ainda não cobrimos o seu bairro, cidade ou estado.');
           } else {
             setBairroValido(true);
             setFormData(prevFormData => ({
@@ -137,6 +140,7 @@ const UserForm = () => {
       }
     }
   };
+  
   useEffect(() => {
     const fetchEcommerce = async () => {
       if (!storeNAME) {
