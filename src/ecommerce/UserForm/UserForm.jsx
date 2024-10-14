@@ -182,11 +182,11 @@ const UserForm = () => {
 
   return (
     <div>
-      {notificacaoVisivel && (
-        <div style={stylesNotificacao.notificacao}>{message}</div>
+        {notificacaoVisivel && (
+        <div className={styles.notificacao}>{message}</div>
       )}
       {erroVisivel && (
-        <div style={stylesNotificacao.erro}>
+        <div className={styles.erro}>
           Desculpe, ainda não cobrimos o seu bairro, cidade ou estado.
         </div>
       )}
@@ -284,27 +284,4 @@ const UserForm = () => {
   );
 };
 
-// Estilos inline para a notificação e erro
-const stylesNotificacao = {
-  notificacao: {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    padding: "10px 20px",
-    backgroundColor: "#4CAF50",
-    color: "white",
-    borderRadius: "5px",
-    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-  },
-  erro: {
-    position: "fixed",
-    bottom: "20px",
-    right: "20px",
-    padding: "10px 20px",
-    backgroundColor: "#f44336",
-    color: "white",
-    borderRadius: "5px",
-    boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
-  },
-};
 export default UserForm;
