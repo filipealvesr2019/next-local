@@ -288,6 +288,7 @@ export default function Products() {
                 </div>
               )}
             </div>
+            
           </div>
         ))
       ) : (
@@ -298,10 +299,10 @@ export default function Products() {
         <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Cadastre-se</ModalHeader>
+            <ModalHeader>Cadastro de Dados</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              Por favor, para poder continuar com sua compra cadastre-se.{" "}
+            Para prosseguir com sua compra, por favor, cadastre o seu endereço de entrega.
             </ModalBody>
 
             <ModalFooter>
@@ -327,13 +328,19 @@ export default function Products() {
             <ModalHeader>Logar</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              Por favor, para poder continuar com sua compra faça login.{" "}
+              Por favor, para poder continuar com sua compra faça login ou Cadastre-se.{" "}
             </ModalBody>
 
             <ModalFooter>
+
               <Link href={"/signin"}>
                 <Button colorScheme="blue" mr={3}>
                   Fazer Login
+                </Button>
+              </Link>
+              <Link href={"/register-user"}>
+                <Button colorScheme="red" mr={3}>
+                  Cadastre-se
                 </Button>
               </Link>
               <Button variant="ghost" onClick={onCloseOFFLINEModal}>

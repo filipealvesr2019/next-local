@@ -11,9 +11,13 @@ const UserForm = () => {
   const { apiUrl } = useConfig();
   const [storeIDAtom, setStoreID] = useAtom(storeID);
   const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
+  const storeNAME = Cookies.get("storeNAME"); // Obtenha o ID do cliente do cookie
 
   console.log('storeIDAtom', storeIDAtom);
   console.log('UserID', UserID);
+  const [bairros, setBairros] = useState()
+  const [formComplete, setFormComplete] = useState(false);
+  const [IsCepInvalid, setIsCepInvalid] = useState(false)
     const savedUserID = Cookies.get("UserID");
   const [showCEP, setShowCEP] = useState(false);
   const [formData, setFormData] = useState({
@@ -56,6 +60,20 @@ const UserForm = () => {
       ...formData,
       [name]: value
     });
+      // Verifica se todos os campos obrigatórios estão preenchidos
+      const requiredFields = [
+        "name",
+        "email",
+        "mobilePhone",
+        "postalCode",
+        "address",
+        "addressNumber",
+        "province",
+        "city",
+        "state",
+      ];
+      const isComplete = requiredFields.every((field) => formData[field]);
+      setFormComplete(isComplete);
   };
 
   const handleSubmit = async (e) => {
@@ -81,6 +99,7 @@ const UserForm = () => {
 
   const handleCepChange = async (event) => {
     const newCep = event.target.value.replace(/\D/g, ""); // Remove caracteres não numéricos
+    
     setFormData({ ...formData, postalCode: newCep });
 
     if (newCep.length === 8) {
@@ -106,7 +125,26 @@ const UserForm = () => {
       }
     }
   };
+  useEffect(() => {
+    const fetchEcommerce = async () => {
+      if (!storeNAME) {
+        console.error("storeNAME não encontrado no cookie.");
+        return;
+      }
 
+      console.log("API URL:", apiUrl);
+
+      try {
+        const response = await axios.get(`${apiUrl}/api/loja/${storeNAME}`);
+        setBairros(response.data);
+        console.log("horarioFuncionamento", response.data.bairros);
+      } catch (error) {
+        console.error("Erro ao buscar o e-commerce:", error);
+      }
+    };
+
+    fetchEcommerce();
+  }, [apiUrl, storeNAME]); // Adicione dependências
   return (
     <div>
       <h2>Cadastro de Usuário</h2>
@@ -122,7 +160,7 @@ const UserForm = () => {
           placeholder="77777-777"
           className={styles.input}
         />
-        <button type="submit">Cadastrar</button>
+        <button type="submit" disabled={!formComplete} style={{ backgroundColor: formComplete ? "#05070A" : "#ccc" }}>Cadastrar</button>
       </form>
       {showCEP && (
         <>

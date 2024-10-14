@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 export default function UserFormContainer() {
     const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
 
+
   const [user, setUser] = useState(null); // Armazena os dados do usuário
   const [isRegistered, setIsRegistered ] = useState(null); // Armazena os dados do usuário
 
@@ -41,6 +42,7 @@ export default function UserFormContainer() {
   if (error) {
     return <p>{error}</p>;
   }
+
 
   return (
     <div>
