@@ -18,6 +18,8 @@ const UserForm = () => {
   const [bairros, setBairros] = useState()
   const [formComplete, setFormComplete] = useState(false);
   const [IsCepInvalid, setIsCepInvalid] = useState(false)
+  const [bairroValido, setBairroValido] = useState(true);
+
     const savedUserID = Cookies.get("UserID");
   const [showCEP, setShowCEP] = useState(false);
   const [formData, setFormData] = useState({
@@ -107,15 +109,25 @@ const UserForm = () => {
         const response = await axios.get(`https://viacep.com.br/ws/${newCep}/json/`);
         const data = response.data;
         if (!data.erro) {
-          setFormData(prevFormData => ({
-            ...prevFormData,
-            address: data.logradouro,
-            complement: data.complemento,
-            province: data.bairro,
-            city: data.localidade,
-            state: data.uf,
-          }));
-          setShowCEP(true);
+          // Verifica se o bairro retornado está entre os bairros válidos
+          const bairroEncontrado = bairros.find(b => b.bairro.toLowerCase() === data.bairro.toLowerCase());
+          
+          if (!bairroEncontrado) {
+            setBairroValido(false);
+            setShowCEP(false);
+            alert('Desculpe, ainda não cobrimos o seu bairro.');
+          } else {
+            setBairroValido(true);
+            setFormData(prevFormData => ({
+              ...prevFormData,
+              address: data.logradouro,
+              complement: data.complemento,
+              province: data.bairro,
+              city: data.localidade,
+              state: data.uf,
+            }));
+            setShowCEP(true);
+          }
         } else {
           setShowCEP(false);
         }
@@ -131,20 +143,26 @@ const UserForm = () => {
         console.error("storeNAME não encontrado no cookie.");
         return;
       }
-
-      console.log("API URL:", apiUrl);
-
+  
       try {
         const response = await axios.get(`${apiUrl}/api/loja/${storeNAME}`);
-        setBairros(response.data);
-        console.log("horarioFuncionamento", response.data.bairros);
+        const bairrosData = response.data.bairros; // Verifica se bairros está aqui
+        
+        if (Array.isArray(bairrosData)) {
+          setBairros(bairrosData);
+        } else {
+          console.error("Bairros não é uma lista:", bairrosData);
+          setBairros([]); // Defina como lista vazia se não for um array
+        }
+  
       } catch (error) {
         console.error("Erro ao buscar o e-commerce:", error);
       }
     };
-
+  
     fetchEcommerce();
-  }, [apiUrl, storeNAME]); // Adicione dependências
+  }, [apiUrl, storeNAME]);
+  
   return (
     <div>
       <h2>Cadastro de Usuário</h2>
