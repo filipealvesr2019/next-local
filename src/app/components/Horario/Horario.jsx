@@ -91,6 +91,24 @@ export default function Horario() {
       console.log(error);
     }
   };
+
+  const handleUpdateHorarios = async () => {
+    try {
+      const response = await axios.put(
+        `${apiUrl}/api/admin/horario-funcionamento/${AdminID}`,
+        {
+          adminID: AdminID,
+          horarioFuncionamento: data, // Envia todos os horários atualizados
+        }
+      );
+      await getProducts(); // Recarrega os dados após a atualização
+      onCloseUpdateModal(); // Fecha o modal
+    } catch (error) {
+      console.error("Error updating horarios:", error);
+    }
+  };
+  
+  
   return (
     <>
       <div
@@ -169,56 +187,58 @@ export default function Horario() {
 
           {/* Modal para confirmar a exclusão de despesa */}
           <Modal isOpen={isUpdateModalOpen} onClose={onCloseUpdateModal} size={'xl'}>
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Atualizar Horário de Funcionamento</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <FormControl className={styles.FormControl}>
-                <FormLabel>Segunda</FormLabel>
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader>Atualizar Horário de Funcionamento</ModalHeader>
+    <ModalCloseButton />
+    <ModalBody>
+      <FormControl className={styles.FormControl}>
+        {["segunda", "terca", "quarta", "quinta", "sexta", "sabado", "domingo"].map((dia) => (
+          <div key={dia}>
+            <FormLabel>{dia.charAt(0).toUpperCase() + dia.slice(1)}</FormLabel>
+            <Input
+              type="time"
+              value={data[dia]?.abertura || ""}
+              onChange={(e) => setData((prev) => ({
+                ...prev,
+                [dia]: { ...prev[dia], abertura: e.target.value },
+              }))}
+              required
+              className={styles.Input}
+            />
+            <Input
+              type="time"
+              value={data[dia]?.fechamento || ""}
+              onChange={(e) => setData((prev) => ({
+                ...prev,
+                [dia]: { ...prev[dia], fechamento: e.target.value },
+              }))}
+              required
+              className={styles.Input}
+            />
+            <Select
+              value={data[dia]?.isOpen ? "true" : "false"}
+              onChange={(e) => setData((prev) => ({
+                ...prev,
+                [dia]: { ...prev[dia], isOpen: e.target.value === "true" },
+              }))}
+            >
+              <option value="true">Aberto</option>
+              <option value="false">Fechado</option>
+            </Select>
+          </div>
+        ))}
+      </FormControl>
+    </ModalBody>
+    <ModalFooter>
+      <Button colorScheme="blue" mr={3} onClick={handleUpdateHorarios}>
+        Salvar
+      </Button>
+      <Button onClick={onCloseUpdateModal}>Cancelar</Button>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
 
-                  <Input
-                    type="time"
-                    value={data?.segunda?.abertura}
-                    required
-                    className={styles.Input}
-                  />
-                  <Input
-                    type="time"
-                    value={data?.segunda?.fechamento}
-                    required
-                    className={styles.Input}
-                  />
-                  <Select placeholder="Esta Fechado?" value={segunda === true ? 'true' : 'false'} onChange={(e) => setSegunda(e.target.value)}>
-                  <option value="true">Aberto</option>
-                  <option value="false">Fechado</option>
-                  </Select>
-
-                  <FormLabel>Terça</FormLabel>
-
-                  <Input
-                    type="time"
-                    value={data?.segunda?.abertura}
-                    required
-                    className={styles.Input}
-                    mb={1} /* Aplicando também no segundo Input */
-                  />
-                  <Input
-                    type="time"
-                    value={data?.segunda?.fechamento}
-                    required
-                    className={styles.Input}
-                  />
-                </FormControl>
-              </ModalBody>
-              <ModalFooter onClick={handleDeleteProduct}>
-                <Button colorScheme="blue" mr={3} onClick={onCloseUpdateModal}>
-                  Salvar
-                </Button>
-                <Button onClick={onCloseUpdateModal}>Cancelar</Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
         </div>
       </div>
     </>
