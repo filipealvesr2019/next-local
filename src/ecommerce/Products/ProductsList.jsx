@@ -98,37 +98,70 @@ export default function Products() {
     setCartCount(savedCount);
   }, []);
 
-
-
-
   const isWithinOperatingHours = () => {
     const now = new Date();
-    const currentDay = now.toLocaleString('pt-BR', { weekday: 'long' }).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-    
-    const currentHour = now.getHours();
-    const currentMinutes = now.getMinutes();
+    const currentDay = now
+        .toLocaleString("pt-BR", { weekday: "long" })
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, ""); // Normalização do dia
 
-    console.log(`Dia atual: ${currentDay}`);
-    console.log(`Hora atual: ${currentHour}`);
-    console.log(`Minutos atuais: ${currentMinutes}`);
+    // Log para verificar o valor de currentDay
+    console.log(`Valor original do dia: ${currentDay}`);
 
-    if (!horario || !horario[currentDay]) {
-        console.log(`Horário não definido para ${currentDay}`);
+    // Mapeia o dia atual para a chave correta no objeto horario
+    const diasDaSemanaMap = {
+        "segunda-feira": "segunda", // Alterado para corresponder à chave correta
+        "terça-feira": "terca", 
+        "quarta-feira": "quarta",
+        "quinta-feira": "quinta",
+        "sexta-feira": "sexta",
+        "sábado": "sabado",
+        "domingo": "domingo"
+    };
+
+    const diaAtual = diasDaSemanaMap[currentDay]; // Mapeia o dia atual para a chave correta
+
+    console.log(`Dia atual: ${diaAtual}`); // Log do dia atual
+
+    // Log para verificar o objeto de horários
+    console.log("Horários disponíveis:", JSON.stringify(horario, null, 2));
+
+    // Verifica se o horário está definido para o dia atual
+    if (!horario || !horario[diaAtual]) {
+        console.log(`Horário não definido para ${diaAtual}`);
+        return false; // Se não houver horário, retorna falso
+    }
+
+    const { abertura, fechamento, isOpen } = horario[diaAtual];
+
+    // Verifica se a loja está aberta
+    if (!isOpen) {
+        console.log(`A loja está fechada hoje, ${diaAtual}.`);
         return false;
     }
 
-    const horarioDia = horario[currentDay];
-    console.log(`Horário de ${currentDay}:`, horarioDia);
+    // Valida se os horários de abertura e fechamento estão definidos
+    if (!abertura || !fechamento) {
+        console.log(`Horário não definido para ${diaAtual}`);
+        return false; // Se algum horário não estiver definido, retorna falso
+    }
 
-    const [openingHour, openingMinutes] = horarioDia.abertura.split(":").map(Number);
-    const [closingHour, closingMinutes] = horarioDia.fechamento.split(":").map(Number);
-
+    const [openingHour, openingMinutes] = abertura.split(":").map(Number);
+    const [closingHour, closingMinutes] = fechamento.split(":").map(Number);
+    const currentTime = now.getHours() * 60 + now.getMinutes();
     const openingTime = openingHour * 60 + openingMinutes;
     const closingTime = closingHour * 60 + closingMinutes;
-    const currentTime = currentHour * 60 + currentMinutes;
+
+    // Ajustar a lógica para lidar com horários de fechamento que ocorrem no dia seguinte
+    if (closingTime < openingTime) {
+        return currentTime >= openingTime || currentTime < closingTime;
+    }
 
     return currentTime >= openingTime && currentTime < closingTime;
 };
+
+
 
 
   // Função para adicionar/remover do carrinho
@@ -142,7 +175,7 @@ export default function Products() {
     
   // Verifica se está dentro do horário de funcionamento
   // Verifica se está dentro do horário de funcionamento
-  if (!isWithinOperatingHours()) { // Remova o parâmetro
+  if (!isWithinOperatingHours() ) { // Remova o parâmetro
     onOpenHoursModal();
     return; // Saia da função se não estiver dentro do horário
   }
@@ -217,7 +250,9 @@ export default function Products() {
                 const response = await axios.get(`${apiUrl}/api/loja/${storeNAME}`);
                 setHorario(response.data.horarioFuncionamento);
                 console.log("horarioFuncionamento", response.data.horarioFuncionamento);
+                
             } catch (error) {
+              
                 console.error("Erro ao buscar o e-commerce:", error);
             }
         };
