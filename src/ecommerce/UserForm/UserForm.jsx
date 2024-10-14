@@ -15,7 +15,7 @@ const UserForm = () => {
 
   console.log('storeIDAtom', storeIDAtom);
   console.log('UserID', UserID);
-  const [bairros, setBairros] = useState()
+  const [bairros, setBairros] = useState([]);
   const [formComplete, setFormComplete] = useState(false);
   const [IsCepInvalid, setIsCepInvalid] = useState(false)
   const [bairroValido, setBairroValido] = useState(true);
