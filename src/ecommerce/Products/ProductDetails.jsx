@@ -53,8 +53,14 @@ export default function ProductDetails({ name, productId }) {
       .replace(/\s+/g, "-") // Substitui espaços por hífens
       .replace(/[^\w\-]+/g, ""); // Remove caracteres não alfanuméricos (exceto hífens)
   };
+  const {
+    isOpen: isHoursModalOpen,
+    onOpen: onOpenHoursModal,
+    onClose: onCloseHoursModal,
+  } = useDisclosure();
+  const [horario, setHorario] = useState(false);
 
-  // Aplicar a normalização ao subdomínio
+  const storeNAME = Cookies.get("storeNAME"); // Obtenha o ID do cliente do cookie
 
   async function getProducts() {
     try {
@@ -93,9 +99,79 @@ export default function ProductDetails({ name, productId }) {
     setCartCount(savedCount);
   }, []);
 
+  const isWithinOperatingHours = () => {
+    const now = new Date();
+    const currentDay = now
+      .toLocaleString("pt-BR", { weekday: "long" })
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, ""); // Normalização do dia
+
+    // Log para verificar o valor de currentDay
+    console.log(`Valor original do dia: ${currentDay}`);
+
+    // Mapeia o dia atual para a chave correta no objeto horario
+    const diasDaSemanaMap = {
+      "segunda-feira": "segunda", // Alterado para corresponder à chave correta
+      "terca-feira": "terca",
+      "quarta-feira": "quarta",
+      "quinta-feira": "quinta",
+      "sexta-feira": "sexta",
+      sabado: "sabado",
+      domingo: "domingo",
+    };
+
+    const diaAtual = diasDaSemanaMap[currentDay]; // Mapeia o dia atual para a chave correta
+
+    console.log(`Dia atual: ${diaAtual}`); // Log do dia atual
+
+    // Log para verificar o objeto de horários
+    console.log("Horários disponíveis:", JSON.stringify(horario, null, 2));
+
+    // Verifica se o horário está definido para o dia atual
+    if (!horario || !horario[diaAtual]) {
+      console.log(`Horário não definido para ${diaAtual}`);
+      return false; // Se não houver horário, retorna falso
+    }
+
+    const { abertura, fechamento, isOpen } = horario[diaAtual];
+
+    // Verifica se a loja está aberta
+    if (!isOpen) {
+      console.log(`A loja está fechada hoje, ${diaAtual}.`);
+      return false;
+    }
+
+    // Valida se os horários de abertura e fechamento estão definidos
+    if (!abertura || !fechamento) {
+      console.log(`Horário não definido para ${diaAtual}`);
+      return false; // Se algum horário não estiver definido, retorna falso
+    }
+
+    const [openingHour, openingMinutes] = abertura.split(":").map(Number);
+    const [closingHour, closingMinutes] = fechamento.split(":").map(Number);
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const openingTime = openingHour * 60 + openingMinutes;
+    const closingTime = closingHour * 60 + closingMinutes;
+
+    // Ajustar a lógica para lidar com horários de fechamento que ocorrem no dia seguinte
+    if (closingTime < openingTime) {
+      return currentTime >= openingTime || currentTime < closingTime;
+    }
+
+    return currentTime >= openingTime && currentTime < closingTime;
+  };
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+    // Verifica se está dentro do horário de funcionamento
+    if (!isWithinOperatingHours() && horario) {
+      // Remova o parâmetro
+      onOpenHoursModal();
+      return; // Saia da função se não estiver dentro do horário
+    }
     if (!loggedIn) {
       onOpenOFFLINEModal();
     }
@@ -145,6 +221,31 @@ export default function ProductDetails({ name, productId }) {
   useEffect(() => {
     fetchUserData();
   }, []);
+
+
+
+  
+  useEffect(() => {
+    const fetchEcommerce = async () => {
+      if (!storeNAME) {
+        console.error("storeNAME não encontrado no cookie.");
+        return;
+      }
+
+      console.log("API URL:", apiUrl);
+
+      try {
+        const response = await axios.get(`${apiUrl}/api/loja/${storeNAME}`);
+        setHorario(response.data.horarioFuncionamento);
+        console.log("horarioFuncionamento", response.data.horarioFuncionamento);
+      } catch (error) {
+        console.error("Erro ao buscar o e-commerce:", error);
+      }
+    };
+
+    fetchEcommerce();
+  }, [apiUrl, storeNAME]); // Adicione dependências
+
   return (
     <div style={{ marginTop: "2rem" }}>
       {data ? (
@@ -247,6 +348,94 @@ export default function ProductDetails({ name, productId }) {
               </Link>
               <Button variant="ghost" onClick={onCloseOFFLINEModal}>
                 Cancelar
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
+
+
+
+{horario && loggedIn && !isWithinOperatingHours() && (
+        <Modal
+          closeOnOverlayClick={false}
+          isOpen={isHoursModalOpen}
+          onClose={onCloseHoursModal}
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Horário de Funcionamento</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              Nossos horários de funcionamento são:
+              <div>
+                Segunda:{" "}
+                {horario.segunda.isOpen ? (
+                  <>
+                    {horario.segunda.abertura} - {horario.segunda.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Terça:{" "}
+                {horario.terca.isOpen ? (
+                  <>
+                    {horario.terca.abertura} - {horario.terca.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Quarta:{" "}
+                {horario.quarta.isOpen ? (
+                  <>
+                    {horario.quarta.abertura} - {horario.quarta.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Quinta:{" "}
+                {horario.quinta.isOpen ? (
+                  <>
+                    {horario.quinta.abertura} - {horario.quinta.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Sexta:{" "}
+                {horario.sexta.isOpen ? (
+                  <>
+                    {horario.sexta.abertura} - {horario.sexta.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Sábado:{" "}
+                {horario.sabado.isOpen ? (
+                  <>
+                    {horario.sabado.abertura} - {horario.sabado.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+                <br />
+                Domingo:{" "}
+                {horario.domingo.isOpen ? (
+                  <>
+                    {horario.domingo.abertura} - {horario.domingo.fechamento}
+                  </>
+                ) : (
+                  "Fechado"
+                )}
+              </div>
+            </ModalBody>
+            <ModalFooter>
+              <Button variant="ghost" onClick={onCloseHoursModal}>
+                Fechar
               </Button>
             </ModalFooter>
           </ModalContent>
