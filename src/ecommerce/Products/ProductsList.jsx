@@ -111,7 +111,7 @@ export default function Products() {
     // Mapeia o dia atual para a chave correta no objeto horario
     const diasDaSemanaMap = {
       "segunda-feira": "segunda", // Alterado para corresponder à chave correta
-      "terça-feira": "terca",
+      "terca-feira": "terca",
       "quarta-feira": "quarta",
       "quinta-feira": "quinta",
       "sexta-feira": "sexta",
