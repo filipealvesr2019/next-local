@@ -3,6 +3,7 @@ import AlarmSoundList from "./AlarmSoundList/AlarmSoundList";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { FormControl, FormLabel, Switch } from "@chakra-ui/react";
+
 const AlarmSoundsPage = () => {
   const [sounds, setSounds] = useState([]);
   const [selectedAlarm, setSelectedAlarm] = useState(null);
@@ -46,11 +47,22 @@ const AlarmSoundsPage = () => {
       await axios.post("http://localhost:3002/api/alarms", {
         adminID: AdminID,
         alarmSound,
-        isAlarmActive
+        isAlarmActive,
       });
       setSelectedAlarm(alarmSound); // Atualiza o alarme selecionado no estado
     } catch (error) {
       console.error("Erro ao selecionar o alarme:", error);
+    }
+  };
+
+  const handleToggleAlarm = async () => {
+    try {
+      const response = await axios.post("http://localhost:3002/api/alarms/toggle", {
+        adminID: AdminID,
+      });
+      setIsAlarmActive(response.data.isAlarmActive); // Atualiza o estado de ativação do alarme
+    } catch (error) {
+      console.error("Erro ao alternar o estado do alarme:", error);
     }
   };
 
@@ -60,7 +72,11 @@ const AlarmSoundsPage = () => {
         <FormLabel htmlFor="alert-on-off" mb="0">
           Ativar alarme?
         </FormLabel>
-        <Switch id="alert-on-off" />
+        <Switch
+          id="alert-on-off"
+          isChecked={isAlarmActive} // Define o estado do switch
+          onChange={handleToggleAlarm} // Chama a função ao alternar o switch
+        />
       </FormControl>
       <h1>Sons de Alarme</h1>
       {/* Componente de lista de sons */}
