@@ -39,8 +39,20 @@ const AlarmSoundsPage = () => {
     });
   };
 
+  const handleSelectAlarm = async (alarmSound) => {
+    try {
+      await axios.post('http://localhost:3002/api/alarms', {
+        adminID: AdminID,
+        alarmSound,
+      });
+      setSelectedAlarm(alarmSound); // Atualiza o alarme selecionado no estado
+    } catch (error) {
+      console.error('Erro ao selecionar o alarme:', error);
+    }
+  };
+
   return (
-    <div style={{marginTop:"10rem"}}>
+    <div style={{ marginTop: "10rem", display: "flex" }}>
       <h1>Sons de Alarme</h1>
       {/* Componente de lista de sons */}
       <AlarmSoundList 
@@ -48,6 +60,7 @@ const AlarmSoundsPage = () => {
         onPlay={playAudio} // Passando a função playAudio corretamente
         selectedAlarm={selectedAlarm} 
         isAlarmActive={isAlarmActive} 
+        onSelect={handleSelectAlarm} // Passando a função de seleção de alarme
       />
     </div>
   );

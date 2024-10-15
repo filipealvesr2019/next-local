@@ -1,16 +1,22 @@
 import React from 'react';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-const AlarmSoundList = ({ sounds, onPlay, selectedAlarm, isAlarmActive }) => {
+
+const AlarmSoundList = ({ sounds, onPlay, selectedAlarm, onSelect }) => {
   return (
-    <ul>
-      {sounds.map((sound, index) => (
-        <li key={index}>
+    <div>
+      {sounds.map(sound => (
+        <div key={sound} style={{ marginBottom: '10px' }}>
           <span>{sound}</span>
-          <PlayArrowIcon onClick={() => onPlay(sound)} />
-          {selectedAlarm === sound && <span> (Selecionado)</span>}
-        </li>
+          <button onClick={() => onPlay(sound)}>Tocar</button>
+          <button 
+            onClick={() => onSelect(sound)} 
+            style={{ 
+              backgroundColor: sound === selectedAlarm ? 'lightgreen' : 'lightgray' 
+            }}>
+            Selecionar
+          </button>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 };
 
