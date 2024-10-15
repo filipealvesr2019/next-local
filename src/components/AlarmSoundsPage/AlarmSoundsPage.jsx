@@ -3,12 +3,33 @@ import AlarmSoundList from "./AlarmSoundList/AlarmSoundList";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { FormControl, FormLabel, Switch } from "@chakra-ui/react";
+import { useConfig } from "../../../context/ConfigContext";
 
 const AlarmSoundsPage = () => {
   const [sounds, setSounds] = useState([]);
   const [selectedAlarm, setSelectedAlarm] = useState(null);
   const [isAlarmActive, setIsAlarmActive] = useState(false);
   const AdminID = Cookies.get("AdminID"); // Obtenha o ID do admin do cookie
+  const { apiUrl } = useConfig();
+  const [storeID, setStoreID] = useState(null); // Inicializa como null até ser recuperado
+
+  useEffect(() => {
+    const handleGetEcommerce = async () => {
+      try {
+        const response = await axios.get(`${apiUrl}/api/loja/admin/${AdminID}`);
+        const retrievedStoreID = response.data._id;
+        setStoreID(retrievedStoreID); // Define o storeID quando recuperado da API
+        console.log('handleGetEcommerce', retrievedStoreID); // Verifique o valor aqui
+      } catch (error) {
+        console.error("Erro ao buscar a loja:", error);
+      }
+    };
+  
+    if (AdminID) {
+      handleGetEcommerce();
+    }
+  }, [AdminID]); // Adiciona o useEffect separado para a busca da loja
+
 
   useEffect(() => {
     // Certificar-se de que o adminID está definido
@@ -33,6 +54,7 @@ const AlarmSoundsPage = () => {
     };
 
     fetchSounds();
+
   }, [AdminID]);
 
   const playAudio = (filename) => {
@@ -43,11 +65,19 @@ const AlarmSoundsPage = () => {
   };
 
   const handleSelectAlarm = async (alarmSound) => {
+    if (!storeID) {
+        console.error("storeID não está definido."); // Verifique se storeID é null
+        return; // Impede a execução se o storeID não estiver definido
+      }
+    
+      console.log("storeID:", storeID); // Adiciona log para verificar o valor de storeID
     try {
       await axios.post("http://localhost:3002/api/alarms", {
         adminID: AdminID,
+        storeID: storeID,
         alarmSound,
         isAlarmActive,
+        
       });
       setSelectedAlarm(alarmSound); // Atualiza o alarme selecionado no estado
     } catch (error) {
@@ -66,6 +96,7 @@ const AlarmSoundsPage = () => {
     }
   };
 
+  
   return (
     <div style={{ marginTop: "10rem" }}>
       <FormControl display="flex" alignItems="center">
