@@ -115,7 +115,7 @@ export default function Products() {
       "quarta-feira": "quarta",
       "quinta-feira": "quinta",
       "sexta-feira": "sexta",
-      sábado: "sabado",
+      sabado: "sabado",
       domingo: "domingo",
     };
 
