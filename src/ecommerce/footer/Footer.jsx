@@ -4,8 +4,7 @@ import React from "react";
 
 import Layout1 from "../layout/Layout2.module.css";
 import Layout2 from "../layout/Layout2.module.css";
-import ProductsList from "../Products/ProductsList";
-import ClientChat from "../ClientChat/ClientChat";
+
 const Footer = ({
   footerColorFrame,
   footerBackgroundColor,

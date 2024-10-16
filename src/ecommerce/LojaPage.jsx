@@ -13,8 +13,8 @@ import { useConfig } from "../../context/ConfigContext";
 import { useSetAtom } from "jotai";
 import { storeID } from "../../store/store";
 import { Chat } from "@mui/icons-material";
-import ClientChat from "./ClientChat/ClientChat";
-import { Main } from "next/document";
+
+import  Main  from "../ecommerce/Main/Main";
 import Footer from "./footer/Footer";
 const LojaPage = ({ store }) => {
   const [ecommerce, setEcommerce] = useState(null);
