@@ -3,8 +3,8 @@ import AlarmSoundList from "./AlarmSoundList/AlarmSoundList";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { FormControl, FormLabel, Switch } from "@chakra-ui/react";
-import { useConfig } from "../../../context/ConfigContext";
 import AlarmComponent from "../AlarmComponent/AlarmComponent";
+import { useConfig } from "../../../../../context/ConfigContext";
 
 const AlarmSoundsPage = () => {
   const [sounds, setSounds] = useState([]);
