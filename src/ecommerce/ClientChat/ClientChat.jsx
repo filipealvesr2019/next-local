@@ -7,7 +7,7 @@ const socket = io('http://localhost:3002', {
   transports: ['websocket', 'polling'],
 });
 
-const ClientChat = () => {
+const ClientChat = ({userName}) => {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const storeID = Cookies.get("storeID"); // Obtenha o ID da loja do cookie
@@ -52,7 +52,7 @@ const ClientChat = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            from: 'Cliente', // ou use um nome mais identificável
+            from: userName, // ou use um nome mais identificável
             message: message,
             storeID: storeID,
             userID: userID

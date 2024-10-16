@@ -6,6 +6,7 @@ import Layout1 from "../layout/Layout2.module.css";
 import Layout2 from "../layout/Layout2.module.css";
 import ProductsList from    '../Products/ProductsList'
 import ClientChat from "../ClientChat/ClientChat";
+import UserFormContainer from "../UserForm/UserFormContainer/UserFormContainer";
 const Main = ({
   mainColorFrame,
   mainBackgroundColor,
@@ -34,7 +35,7 @@ const Main = ({
         color: mainTextColorFrame ? mainTextColorFrame : mainColor,
       }}
     >
-      <ClientChat />
+      <UserFormContainer />
       <ProductsList />
     </main>
   );

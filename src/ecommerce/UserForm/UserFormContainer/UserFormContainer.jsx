@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useConfig } from '../../../../context/ConfigContext';
 import Cookies from "js-cookie";
+import ClientChat from '@/ecommerce/ClientChat/ClientChat';
 
 export default function UserFormContainer() {
     const UserID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
@@ -46,19 +47,8 @@ export default function UserFormContainer() {
 
   return (
     <div>
-      {user ? (
-        <div>
-          <h1>Dados do Usuário</h1>
-          <p><strong>Nome:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>Telefone:</strong> {user.mobilePhone}</p>
-          <p><strong>Endereço:</strong> {user.address}, {user.addressNumber}, {user.city} - {user.state}</p>
-          <p><strong>CEP:</strong> {user.postalCode}</p>
-          {/* Renderize mais informações do usuário conforme necessário */}
-        </div>
-      ) : (
-        <p>Usuário não encontrado.</p>
-      )}
+     
+      <ClientChat userName={user.name} />
     </div>
   );
 }
