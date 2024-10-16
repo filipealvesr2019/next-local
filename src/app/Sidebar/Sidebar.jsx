@@ -19,7 +19,7 @@ import Home from "../page";
 import Finaceiro from "../components/Finaceiro/Finaceiro";
 import Bairros from "../components/Bairros/Bairros";
 import Horario from "../components/Horario/Horario";
-import AlarmSoundsPage from "@/components/AlarmSoundsPage/AlarmSoundsPage";
+import AlarmSoundsPage from "../../app/components/alarm/AlarmSoundsPage/AlarmSoundsPage";
 
 const HomeIcon = () => (
   <svg className={styles.icon} viewBox="0 0 20 20" fill="currentColor">
