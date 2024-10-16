@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -7,13 +7,15 @@ import Tabs from "./tabs/Tabs";
 import SearchBar from "./SearchBar/SearchBar";
 import Layout1 from "../ecommerce/layout/Layout1.module.css";
 import Layout2 from "../ecommerce/layout/Layout2.module.css";
-import Header from '../ecommerce/header/Header'
-import ProductsList from './Products/ProductsList';
+import Header from "../ecommerce/header/Header";
+import ProductsList from "./Products/ProductsList";
 import { useConfig } from "../../context/ConfigContext";
 import { useSetAtom } from "jotai";
 import { storeID } from "../../store/store";
 import { Chat } from "@mui/icons-material";
-const LojaPage = ({store}) => {
+import ClientChat from "./ClientChat/ClientChat";
+import { Main } from "next/document";
+const LojaPage = ({ store }) => {
   const [ecommerce, setEcommerce] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingSection, setEditingSection] = useState(null);
@@ -35,14 +37,11 @@ const LojaPage = ({store}) => {
   const [footerTextColorFrame, setFooterTextColorFrame] = useState(mainColor);
   const { apiUrl } = useConfig();
   const setStoreID = useSetAtom(storeID);
-  
 
   useEffect(() => {
     const fetchEcommerce = async () => {
       try {
-        const response = await axios.get(
-          `${apiUrl}/api/loja/${store}`
-        );
+        const response = await axios.get(`${apiUrl}/api/loja/${store}`);
         setEcommerce(response.data);
         setLogo(response.data.theme.header.Logo);
         setHeaderBackgroundColor(response.data.theme.header.backgroundColor);
@@ -52,29 +51,29 @@ const LojaPage = ({store}) => {
         setFooterBackgroundColor(response.data.theme.footer.backgroundColor);
         setLayout(response.data.layout);
         setFooterColor(response.data.theme.footer.color);
-        console.log('store',response.data._id)
-     // Resetando o adminID sempre que a loja mudar
-     if (response.data._id) {
-      setStoreID(response.data._id); // Atualiza o átomo com o novo ID
-      Cookies.set("storeID", response.data._id, {
-        sameSite: "None",
-        secure: true,
-      }); // Persiste o adminID no cookie
-      console.log("storeID atualizado e salvo:", response.data._id);
-    } else {
-      console.warn("storeID não encontrado na resposta da API.");
-    }
+        console.log("store", response.data._id);
+        // Resetando o adminID sempre que a loja mudar
+        if (response.data._id) {
+          setStoreID(response.data._id); // Atualiza o átomo com o novo ID
+          Cookies.set("storeID", response.data._id, {
+            sameSite: "None",
+            secure: true,
+          }); // Persiste o adminID no cookie
+          console.log("storeID atualizado e salvo:", response.data._id);
+        } else {
+          console.warn("storeID não encontrado na resposta da API.");
+        }
 
-    if (response.data.dominio) {
-      setStoreID(response.data.dominio); // Atualiza o átomo com o novo ID
-      Cookies.set("storeNAME", response.data.dominio, {
-        sameSite: "None",
-        secure: true,
-      }); // Persiste o adminID no cookie
-      console.log("storeNAME atualizado e salvo:", response.data.dominio);
-    } else {
-      console.warn("storeNAME não encontrado na resposta da API.");
-    }
+        if (response.data.dominio) {
+          setStoreID(response.data.dominio); // Atualiza o átomo com o novo ID
+          Cookies.set("storeNAME", response.data.dominio, {
+            sameSite: "None",
+            secure: true,
+          }); // Persiste o adminID no cookie
+          console.log("storeNAME atualizado e salvo:", response.data.dominio);
+        } else {
+          console.warn("storeNAME não encontrado na resposta da API.");
+        }
       } catch (error) {
         console.error("Erro ao buscar o e-commerce:", error);
       }
@@ -82,7 +81,7 @@ const LojaPage = ({store}) => {
 
     fetchEcommerce();
   }, [setStoreID]);
-  
+
   const layoutStyles = () => {
     switch (layout) {
       case "layout1":
@@ -96,20 +95,18 @@ const LojaPage = ({store}) => {
 
   const styles = layoutStyles(); // Chame a função para obter o estilo correto
 
- 
   if (!ecommerce) {
     return <div>Carregando...</div>;
   }
 
   return (
     <>
-    
       <div className={styles.container}>
         <div className={styles.screenContainer}>
           <div
             style={{ backgroundColor: mainBackgroundColor, color: mainColor }}
           >
-             <Header
+            <Header
               headerColorFrame={headerColorFrame}
               headerBackgroundColor={headerBackgroundColor}
               headerTextColorFrame={headerTextColorFrame}
@@ -117,20 +114,16 @@ const LojaPage = ({store}) => {
               logo={logo}
               layout={layout}
             />
-           
-            <Tabs />
-            <main
-              className={styles.main}
-              style={{
-                backgroundColor: mainColorFrame
-                  ? mainColorFrame
-                  : mainBackgroundColor,
-                color: mainTextColorFrame ? mainTextColorFrame : mainColor,
-              }}
-            >
 
-              <ProductsList />
-            </main>
+            <Tabs />
+            <Main
+              mainColorFrame={mainColorFrame}
+              mainBackgroundColor={mainBackgroundColor}
+              mainTextColorFrame={mainTextColorFrame}
+              headerColor={mainColor}
+              mainColor={mainColor}
+              layout={layout}
+            />
             <footer
               style={{
                 backgroundColor: footerColorFrame
@@ -143,7 +136,6 @@ const LojaPage = ({store}) => {
               className={styles.footer}
             >
               <span>Footer da Loja</span>
-              
             </footer>
 
             <div
@@ -155,8 +147,8 @@ const LojaPage = ({store}) => {
             >
               {/* Carrossel content here */}
               carrosel loja
-              <Chat />fffffffff
-
+              <Chat />
+              fffffffff
             </div>
           </div>
         </div>
@@ -166,4 +158,3 @@ const LojaPage = ({store}) => {
 };
 
 export default LojaPage;
-

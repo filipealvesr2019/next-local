@@ -1,16 +1,19 @@
 
 // import UserForm from '../UserForm/UserForm'
-import Header from '../header/Header'
+
 import ProductsList from '../../ecommerce/Products/ProductsList'
-import Link from 'next/link'
 import Container from '../StoreContainer/HeaderContainer'
+import LojaPage from '../LojaPage'
+import Main from '../Main/Main'
 // import UserForm from '../UserForm/UserForm'
 export default function Profile(){
   return (
 
     <>
     {/* <Link href={"/store"}>home</Link> */}
-    <ProductsList />
+  
+    <Main />
+
     {/* <UserForm /> */}
  <Container />
     </>

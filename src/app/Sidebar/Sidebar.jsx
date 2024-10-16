@@ -20,6 +20,7 @@ import Finaceiro from "../components/Finaceiro/Finaceiro";
 import Bairros from "../components/Bairros/Bairros";
 import Horario from "../components/Horario/Horario";
 import AlarmSoundsPage from "../../app/components/alarm/AlarmSoundsPage/AlarmSoundsPage";
+import AdminChat from "../components/AdminChat/AdminChat";
 
 const HomeIcon = () => (
   <svg className={styles.icon} viewBox="0 0 20 20" fill="currentColor">
@@ -178,14 +179,20 @@ const Sidebar = () => {
             <SettingsIcon />
             <Text className={styles.itemText}>Horario</Text>
           </Flex>
-          <Flex
+          {/* <Flex
             className={styles.sidebarItem}
             onClick={() => setContent("alarme")}
           >
             <SettingsIcon />
             <Text className={styles.itemText}>alarme</Text>
+          </Flex> */}
+          <Flex
+            className={styles.sidebarItem}
+            onClick={() => setContent("chat")}
+          >
+            <SettingsIcon />
+            <Text className={styles.itemText}>chat</Text>
           </Flex>
-          
           <Button
             className={styles.sidebarItem}
             onClick={logout}
@@ -208,7 +215,9 @@ const Sidebar = () => {
           {content === "Relatório" && <Finaceiro />}
           {content === "Bairros" && <Bairros />}
           {content === "Horario" && <Horario />}
-          {content === "alarme" && <AlarmSoundsPage />}
+          {/* {content === "alarme" && <AlarmSoundsPage />} */}
+          {content === "chat" && <AdminChat />}
+
 
           
            
