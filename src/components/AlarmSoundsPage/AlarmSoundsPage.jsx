@@ -4,6 +4,7 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { FormControl, FormLabel, Switch } from "@chakra-ui/react";
 import { useConfig } from "../../../context/ConfigContext";
+import AlarmComponent from "../AlarmComponent/AlarmComponent";
 
 const AlarmSoundsPage = () => {
   const [sounds, setSounds] = useState([]);
@@ -99,6 +100,7 @@ const AlarmSoundsPage = () => {
   
   return (
     <div style={{ marginTop: "10rem" }}>
+    <AlarmComponent />
       <FormControl display="flex" alignItems="center">
         <FormLabel htmlFor="alert-on-off" mb="0">
           Ativar alarme?
