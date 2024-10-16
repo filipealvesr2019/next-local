@@ -4,13 +4,13 @@ import React from "react";
 
 import Layout1 from "../layout/Layout2.module.css";
 import Layout2 from "../layout/Layout2.module.css";
-import ProductsList from    '../Products/ProductsList'
+import ProductsList from "../Products/ProductsList";
 import ClientChat from "../ClientChat/ClientChat";
-const Main = ({
-  mainColorFrame,
-  mainBackgroundColor,
-  mainTextColorFrame,
-  mainColor,
+const Footer = ({
+  footerColorFrame,
+  footerBackgroundColor,
+  footerTextColorFrame,
+  footerColor,
   layout,
 }) => {
   const layoutStyles = () => {
@@ -27,17 +27,18 @@ const Main = ({
   const styles = layoutStyles(); // Chame a função para obter o estilo correto
 
   return (
-    <main
-      className={styles.main}
+    <footer
       style={{
-        backgroundColor: mainColorFrame ? mainColorFrame : mainBackgroundColor,
-        color: mainTextColorFrame ? mainTextColorFrame : mainColor,
+        backgroundColor: footerColorFrame
+          ? footerColorFrame
+          : footerBackgroundColor,
+        color: footerTextColorFrame ? footerTextColorFrame : footerColor,
       }}
+      className={styles.footer}
     >
-      <ClientChat />
-      <ProductsList />
-    </main>
+      <span>Footer da Loja</span>
+    </footer>
   );
 };
 
-export default Main;
+export default Footer;

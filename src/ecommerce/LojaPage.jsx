@@ -15,6 +15,7 @@ import { storeID } from "../../store/store";
 import { Chat } from "@mui/icons-material";
 import ClientChat from "./ClientChat/ClientChat";
 import { Main } from "next/document";
+import Footer from "./footer/Footer";
 const LojaPage = ({ store }) => {
   const [ecommerce, setEcommerce] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -124,19 +125,15 @@ const LojaPage = ({ store }) => {
               mainColor={mainColor}
               layout={layout}
             />
-            <footer
-              style={{
-                backgroundColor: footerColorFrame
-                  ? footerColorFrame
-                  : footerBackgroundColor,
-                color: footerTextColorFrame
-                  ? footerTextColorFrame
-                  : footerColor,
-              }}
-              className={styles.footer}
-            >
-              <span>Footer da Loja</span>
-            </footer>
+
+            <Footer
+              footerColorFrame={footerColorFrame}
+              footerBackgroundColor={footerBackgroundColor}
+              footerTextColorFrame={footerTextColorFrame}
+              footerColor={footerColor}
+              mainColor={mainColor}
+              layout={layout}
+            />
 
             <div
               id="carrosel"
