@@ -11,6 +11,7 @@ const socket = io('http://localhost:3002', {
 const AdminChat = () => {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
   const userID = Cookies.get("UserID");
   const { apiUrl } = useConfig();
   const AdminID = Cookies.get("AdminID");
@@ -37,9 +38,6 @@ const AdminChat = () => {
       try {
         const response = await fetch(`${apiUrl}/api/messages/${storeID}`);
         const messages = await response.json();
-        console.log(messages);
-
-        // Verifique se messages é um array
         if (Array.isArray(messages)) {
           setChat(messages);
         } else {
@@ -51,7 +49,7 @@ const AdminChat = () => {
       }
     };
 
-    if (storeID) { // Adiciona verificação para garantir que o storeID não é nulo
+    if (storeID) {
       fetchMessages();
     }
 
@@ -68,7 +66,7 @@ const AdminChat = () => {
     if (message.trim()) {
       socket.emit('clientMessage', message);
       setChat((prevChat) => [...prevChat, { from: 'You', message }]);
-      
+
       try {
         const response = await fetch(`${apiUrl}/api/messages`, {
           method: 'POST',
@@ -94,23 +92,45 @@ const AdminChat = () => {
     }
   };
 
+  const handleUserClick = (user) => {
+    setSelectedUser(user);
+  };
+
+  const filteredMessages = selectedUser
+    ? chat.filter(msg => msg.from === selectedUser)
+    : '';
+
   return (
-    <div>
-      <h2>Chat com Suporte</h2>
-      <div style={{ border: '1px solid #ccc', height: '300px', overflowY: 'scroll' }}>
-        {Array.isArray(chat) && chat.map((msg, idx) => (
-          <div key={idx}>
-            <strong>{msg.from}:</strong> {msg.message}
+    <div style={{ display: 'flex', height: '500px', marginTop:"10rem" }}>
+      {/* Coluna da esquerda */}
+      <div style={{ width: '30%', borderRight: '1px solid #ccc', overflowY: 'scroll' }}>
+        <h3>Usuários</h3>
+        {Array.from(new Set(chat.map(msg => msg.from))).map((user, idx) => (
+          <div key={idx} onClick={() => handleUserClick(user)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <img src={`path/to/icon/${user}.png`} alt={user} style={{ width: '30px', height: '30px', marginRight: '10px' }} />
+            <span>{user}</span>
           </div>
         ))}
       </div>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Digite sua mensagem..."
-      />
-      <button onClick={sendMessage}>Enviar</button>
+      
+      {/* Coluna da direita */}
+      <div style={{ width: '70%', padding: '10px', overflowY: 'scroll' }}>
+        <h2>Chat com Suporte</h2>
+        <div style={{ border: '1px solid #ccc', height: '240px', overflowY: 'scroll' }}>
+          {Array.isArray(filteredMessages) && filteredMessages.map((msg, idx) => (
+            <div key={idx}>
+              <strong>{msg.from}:</strong> {msg.message}
+            </div>
+          ))}
+        </div>
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Digite sua mensagem..."
+        />
+        <button onClick={sendMessage}>Enviar</button>
+      </div>
     </div>
   );
 };

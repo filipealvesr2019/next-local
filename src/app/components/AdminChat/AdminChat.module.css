@@ -1,0 +1,57 @@
+.container {
+    display: flex;
+    height: 100vh;
+    background-color: #f4f4f9;
+    margin-top: 20rem;
+  }
+  
+  .sidebar {
+    width: 250px;
+    background-color: #fff;
+    border-right: 1px solid #ddd;
+    padding: 1rem;
+    overflow-y: auto; /* Allow scrolling if there are many users */
+  }
+  
+  .sidebar h3 {
+    margin-bottom: 1rem;
+  }
+  
+  .userItem {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .userItem:hover {
+    background-color: #f0f0f0; /* Highlight on hover */
+  }
+  
+  .chatArea {
+    flex: 1;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .chatArea h2 {
+    margin-bottom: 1rem;
+  }
+  
+  .chatArea input {
+    margin-top: auto; /* Push the input field to the bottom */
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .chatArea button {
+    padding: 0.5rem 1rem;
+    background-color: #6f00ff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+  }
+  
