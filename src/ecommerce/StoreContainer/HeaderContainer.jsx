@@ -55,7 +55,7 @@ export default function HeaderContainer(){
     }, []);
     
 return (
-    <>
+    <div>
          <Header
               headerColorFrame={headerColorFrame}
               headerBackgroundColor={headerBackgroundColor}
@@ -63,8 +63,9 @@ return (
               headerColor={headerColor}
               logo={logo}
               layout={layout}
+              
             />
            
-    </>
+    </div >
 )
 }

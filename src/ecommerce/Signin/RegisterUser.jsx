@@ -10,6 +10,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import styles from './RegisterUser.module.css';
 
 function RegisterUser({token}) {
+
+  const [name, setName] = useState('');
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -59,7 +62,7 @@ console.log(token)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:3002/api/register-user-token/${token}`, { email, password, role });
+      const response = await axios.post(`http://localhost:3002/api/register-user-token/${token}`, { name, email, password, role });
       setMessage(response.data.message);
     } catch (error) {
       setError(error.response.data.error);
@@ -73,6 +76,10 @@ console.log(token)
         <form onSubmit={handleSubmit} className={styles.formContainer}>
           <h2 className={styles.h2}>Cadastro</h2>
           {message && <p>{message}</p>}
+          <div className={styles.specs}>
+            <label className={styles.label}>Nome:</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required className={styles.input} />
+          </div>
           <div className={styles.specs}>
             <label className={styles.label}>Email:</label>
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={styles.input} />

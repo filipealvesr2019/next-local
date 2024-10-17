@@ -4,6 +4,8 @@ import React from "react";
 
 import Layout1 from "../layout/Layout2.module.css";
 import Layout2 from "../layout/Layout2.module.css";
+import { useAuth } from "../context/UserAuthProvider";
+import UserFormContainer from "../UserForm/UserFormContainer/UserFormContainer";
 
 const Footer = ({
   footerColorFrame,
@@ -12,6 +14,8 @@ const Footer = ({
   footerColor,
   layout,
 }) => {
+  const {loggedIn} = useAuth() 
+
   const layoutStyles = () => {
     switch (layout) {
       case "layout1":
@@ -35,6 +39,8 @@ const Footer = ({
       }}
       className={styles.footer}
     >
+            {loggedIn ? <UserFormContainer /> : ''}
+
       <span>Footer da Loja</span>
     </footer>
   );

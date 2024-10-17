@@ -3,7 +3,7 @@ import React from 'react';
 
 import SearchBar from '../SearchBar/SearchBar';
 import styles from './Header.module.css'; // Ajuste o caminho para o seu CSS
-import Layout1 from "../layout/Layout2.module.css";
+import Layout1 from "../layout/Layout1.module.css";
 import Layout2 from "../layout/Layout2.module.css";
 import Navbar from '../Navbar/Navbar';
 import Link from 'next/link';

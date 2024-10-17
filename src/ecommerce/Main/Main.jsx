@@ -5,8 +5,7 @@ import React from "react";
 import Layout1 from "../layout/Layout2.module.css";
 import Layout2 from "../layout/Layout2.module.css";
 import ProductsList from    '../Products/ProductsList'
-import ClientChat from "../ClientChat/ClientChat";
-import UserFormContainer from "../UserForm/UserFormContainer/UserFormContainer";
+
 const Main = ({
   mainColorFrame,
   mainBackgroundColor,
@@ -26,7 +25,6 @@ const Main = ({
   };
 
   const styles = layoutStyles(); // Chame a função para obter o estilo correto
-
   return (
     <main
       className={styles.main}
@@ -35,7 +33,7 @@ const Main = ({
         color: mainTextColorFrame ? mainTextColorFrame : mainColor,
       }}
     >
-      <UserFormContainer />
+      
       <ProductsList />
     </main>
   );

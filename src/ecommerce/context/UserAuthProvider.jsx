@@ -49,7 +49,8 @@ export const useAuth = () => {
       Cookies.set('UserToken', response.data.token, { sameSite: 'None', secure: true });
       Cookies.set('UserRole', response.data.user.role, { sameSite: 'None', secure: true });
       Cookies.set('UserID', response.data.user._id, { sameSite: 'None', secure: true });
-      
+      Cookies.set('UserName', response.data.user.name, { sameSite: 'None', secure: true });
+
       setCustomerID(response.data.user._id);
       
     } catch (error) {
@@ -64,7 +65,8 @@ export const useAuth = () => {
     Cookies.remove('UserToken');
     Cookies.remove('UserRole');
     Cookies.remove('UserID');
-    
+    Cookies.remove('UserName');
+
     setLoggedIn(false);
     setIsUser(false);
     setCustomerID(null);
