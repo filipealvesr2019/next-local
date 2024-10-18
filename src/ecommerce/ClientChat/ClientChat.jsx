@@ -5,6 +5,7 @@ import { useConfig } from "../../../context/ConfigContext";
 import ChatIcon from "@mui/icons-material/Chat";
 import styles from "./ClientChat.module.css";
 import RemoveIcon from '@mui/icons-material/Remove';
+
 const socket = io("http://localhost:3002", {
   transports: ["websocket", "polling"],
 });
@@ -16,6 +17,7 @@ const ClientChat = ({ userName }) => {
   const userID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
   const { apiUrl } = useConfig();
   const [openChat, setOpenChat] = useState(false);
+
   useEffect(() => {
     // Função para buscar mensagens do banco de dados
     const fetchMessages = async () => {
@@ -24,7 +26,6 @@ const ClientChat = ({ userName }) => {
           `${apiUrl}/api/messages/${storeID}/user/${userID}`
         );
         const messages = await response.json();
-        console.log(messages);
         setChat(messages);
       } catch (error) {
         console.error("Erro ao carregar mensagens:", error);
@@ -34,24 +35,29 @@ const ClientChat = ({ userName }) => {
     // Buscar mensagens ao montar o componente
     fetchMessages();
 
+    // Receber mensagem do admin em tempo real
     socket.on("adminMessage", (adminMessage) => {
       setChat((prevChat) => [
         ...prevChat,
-        { from: "Admin", text: adminMessage },
+        { from: "Admin", message: adminMessage },
       ]);
     });
 
+    // Limpar listener ao desmontar o componente
     return () => {
       socket.off("adminMessage");
     };
-  }, [storeID, userID]);
+  }, [storeID, userID, apiUrl]);
 
   const sendMessage = async () => {
     if (message.trim()) {
-      socket.emit("clientMessage", message); // Enviar mensagem para o admin
-      setChat((prevChat) => [...prevChat, { from: "You", text: message }]);
+      // Emitir a mensagem para o admin via socket
+      socket.emit("clientMessage", message);
 
-      // Salvar mensagem no banco de dados
+      // Atualizar o estado do chat imediatamente no frontend
+      setChat((prevChat) => [...prevChat, { from: userName, message }]);
+
+      // Salvar a mensagem no banco de dados
       try {
         const response = await fetch(`${apiUrl}/api/messages`, {
           method: "POST",
@@ -59,7 +65,7 @@ const ClientChat = ({ userName }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: userName, // ou use um nome mais identificável
+            from: userName, 
             message: message,
             storeID: storeID,
             userID: userID,
@@ -73,7 +79,8 @@ const ClientChat = ({ userName }) => {
         console.error("Erro ao enviar a mensagem:", error);
       }
 
-      setMessage(""); // Limpar campo de mensagem
+      // Limpar campo de mensagem
+      setMessage("");
     }
   };
 
@@ -84,9 +91,7 @@ const ClientChat = ({ userName }) => {
       </div>
       {openChat ? (
         <div className={styles.ChatIcon}>
-          <RemoveIcon onClick={() => setOpenChat(!openChat)} style={{
-            marginTop:"25rem"
-          }}/>
+          <RemoveIcon onClick={() => setOpenChat(!openChat)} style={{ marginTop: "25rem" }} />
           <div
             style={{
               border: "1px solid #ccc",
@@ -96,8 +101,7 @@ const ClientChat = ({ userName }) => {
           >
             {chat.map((msg, idx) => (
               <div key={idx}>
-                <strong>{msg.from}:</strong> {msg.message}{" "}
-                {/* Corrigido para usar 'message' */}
+                <strong>{msg.from}:</strong> {msg.message}
               </div>
             ))}
           </div>
