@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import Cookies from "js-cookie";
 import { useConfig } from '../../../../context/ConfigContext';
 import axios from 'axios';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const socket = io('http://localhost:3002', {
   transports: ['websocket', 'polling'],
@@ -122,7 +123,7 @@ const AdminChat = () => {
 
           return (
             <div key={idx} onClick={() => handleUserClick(user)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-              <img src={`path/to/icon/${user}.png`} alt={user} style={{ width: '30px', height: '30px', marginRight: '10px' }} />
+              <AccountCircleIcon />
               <span>{userName}</span> {/* Use userName aqui */}
             </div>
           );
