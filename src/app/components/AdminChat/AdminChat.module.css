@@ -19,7 +19,8 @@ width: 70vw;
   }
   .messageContent{
     background-color: #fff;
- 
+    border-radius: 10px;
+
 
    padding: 1rem;
 

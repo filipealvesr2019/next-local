@@ -41,7 +41,7 @@ const AdminChat = () => {
         const messages = await response.json();
         if (Array.isArray(messages)) {
           setChat(messages);
-          console.log(messages);
+          console.log("messages", messages);
         } else {
           console.error('A resposta não é um array:', messages);
           setChat([]); // Se não for um array, defina chat como um array vazio
@@ -135,17 +135,18 @@ const AdminChat = () => {
         <div  className={styles.messageContent}>
           {Array.isArray(filteredMessages) && filteredMessages.map((msg, idx) => (
             <div key={idx}>
-              <strong>{msg.from}:</strong> {msg.message}
-            </div>
+    <strong>{msg.from}:</strong> {msg.message} {msg.createdAt ? new Date(msg.createdAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : ''}
+    </div>
           ))}
-        </div>
-        <input
+             <input
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Digite sua mensagem..."
         />
         <button onClick={sendMessage}>Enviar</button>
+        </div>
+     
       </div>
     </div>
   );
