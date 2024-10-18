@@ -40,6 +40,7 @@ const AdminChat = () => {
         const messages = await response.json();
         if (Array.isArray(messages)) {
           setChat(messages);
+          console.log(messages);
         } else {
           console.error('A resposta não é um array:', messages);
           setChat([]); // Se não for um array, defina chat como um array vazio
@@ -54,18 +55,24 @@ const AdminChat = () => {
     }
 
     socket.on('adminMessage', (adminMessage) => {
-      setChat((prevChat) => [...prevChat, { from: 'Admin', message: adminMessage }]);
+      // Quando uma nova mensagem do admin chega, verifique se é para o usuário selecionado
+      if (selectedUser) {
+        setChat((prevChat) => [...prevChat, { from: 'Admin', message: adminMessage, userID: selectedUser }]);
+      }
     });
 
     return () => {
       socket.off('adminMessage');
     };
-  }, [storeID, userID]);
+  }, [storeID, selectedUser]); // Adiciona selectedUser como dependência
 
   const sendMessage = async () => {
-    if (message.trim()) {
-      socket.emit('clientMessage', message);
-      setChat((prevChat) => [...prevChat, { from: 'You', message }]);
+    if (message.trim() && selectedUser) { // Verifica se um usuário está selecionado
+      const messageObject = { from: 'You', message, userID: selectedUser };
+
+      // Envia a mensagem pelo socket
+      socket.emit('clientMessage', message); // Envia mensagem pelo socket
+      setChat((prevChat) => [...prevChat, messageObject]); // Adiciona a mensagem ao chat
 
       try {
         const response = await fetch(`${apiUrl}/api/messages`, {
@@ -77,7 +84,7 @@ const AdminChat = () => {
             from: 'admin',
             message: message,
             storeID: storeID,
-            userID: userID
+            userID: selectedUser // Usa o selectedUser para associar a mensagem
           }),
         });
 
@@ -89,6 +96,8 @@ const AdminChat = () => {
       }
 
       setMessage('');
+    } else {
+      console.error("Selecione um usuário antes de enviar uma mensagem."); // Mensagem de erro se não houver usuário selecionado
     }
   };
 
@@ -96,21 +105,28 @@ const AdminChat = () => {
     setSelectedUser(user);
   };
 
+  // Filtra mensagens com base no usuário selecionado
   const filteredMessages = selectedUser
-    ? chat.filter(msg => msg.from === selectedUser)
-    : '';
+    ? chat.filter(msg => msg.userID === selectedUser) // Filtra mensagens do usuário selecionado
+    : ''; // Mostra todas as mensagens se nenhum usuário estiver selecionado
 
   return (
-    <div style={{ display: 'flex', height: '500px', marginTop:"10rem" }}>
+    <div style={{ display: 'flex', height: '500px', marginTop: "10rem" }}>
       {/* Coluna da esquerda */}
       <div style={{ width: '30%', borderRight: '1px solid #ccc', overflowY: 'scroll' }}>
         <h3>Usuários</h3>
-        {Array.from(new Set(chat.map(msg => msg.from))).map((user, idx) => (
-          <div key={idx} onClick={() => handleUserClick(user)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            <img src={`path/to/icon/${user}.png`} alt={user} style={{ width: '30px', height: '30px', marginRight: '10px' }} />
-            <span>{user}</span>
-          </div>
-        ))}
+        {Array.from(new Set(chat.map(msg => msg.userID))).map((user, idx) => {
+          // Encontre o primeiro nome correspondente ao userID
+          const userMsg = chat.find(msg => msg.userID === user);
+          const userName = userMsg ? userMsg.from : 'Usuário Desconhecido'; // Define um nome padrão caso não encontre
+
+          return (
+            <div key={idx} onClick={() => handleUserClick(user)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+              <img src={`path/to/icon/${user}.png`} alt={user} style={{ width: '30px', height: '30px', marginRight: '10px' }} />
+              <span>{userName}</span> {/* Use userName aqui */}
+            </div>
+          );
+        })}
       </div>
       
       {/* Coluna da direita */}
