@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
+import React, { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 import Cookies from "js-cookie";
-import { useConfig } from '../../../../context/ConfigContext';
-import axios from 'axios';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import styles from './AdminChat.module.css'
-const socket = io('http://localhost:3002', {
-  transports: ['websocket', 'polling'],
+import { useConfig } from "../../../../context/ConfigContext";
+import axios from "axios";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import styles from "./AdminChat.module.css";
+const socket = io("http://localhost:3002", {
+  transports: ["websocket", "polling"],
 });
 
 const AdminChat = () => {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const userID = Cookies.get("UserID");
@@ -43,11 +43,11 @@ const AdminChat = () => {
           setChat(messages);
           console.log("messages", messages);
         } else {
-          console.error('A resposta não é um array:', messages);
+          console.error("A resposta não é um array:", messages);
           setChat([]); // Se não for um array, defina chat como um array vazio
         }
       } catch (error) {
-        console.error('Erro ao carregar mensagens:', error);
+        console.error("Erro ao carregar mensagens:", error);
       }
     };
 
@@ -55,48 +55,52 @@ const AdminChat = () => {
       fetchMessages();
     }
 
-    socket.on('adminMessage', (adminMessage) => {
+    socket.on("adminMessage", (adminMessage) => {
       // Quando uma nova mensagem do admin chega, verifique se é para o usuário selecionado
       if (selectedUser) {
-        setChat((prevChat) => [...prevChat, { from: 'Admin', message: adminMessage, userID: selectedUser }]);
+        setChat((prevChat) => [
+          ...prevChat,
+          { from: "Admin", message: adminMessage, userID: selectedUser },
+        ]);
       }
     });
 
     return () => {
-      socket.off('adminMessage');
+      socket.off("adminMessage");
     };
   }, [storeID, selectedUser]); // Adiciona selectedUser como dependência
 
   const sendMessage = async () => {
-    if (message.trim() && selectedUser) { // Verifica se um usuário está selecionado
-      const messageObject = { from: 'You', message, userID: selectedUser };
+    if (message.trim() && selectedUser) {
+      // Verifica se um usuário está selecionado
+      const messageObject = { from: "You", message, userID: selectedUser };
 
       // Envia a mensagem pelo socket
-      socket.emit('clientMessage', message); // Envia mensagem pelo socket
+      socket.emit("clientMessage", message); // Envia mensagem pelo socket
       setChat((prevChat) => [...prevChat, messageObject]); // Adiciona a mensagem ao chat
 
       try {
         const response = await fetch(`${apiUrl}/api/messages`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: 'admin',
+            from: "admin",
             message: message,
             storeID: storeID,
-            userID: selectedUser // Usa o selectedUser para associar a mensagem
+            userID: selectedUser, // Usa o selectedUser para associar a mensagem
           }),
         });
 
         if (!response.ok) {
-          throw new Error('Erro ao salvar a mensagem');
+          throw new Error("Erro ao salvar a mensagem");
         }
       } catch (error) {
-        console.error('Erro ao enviar a mensagem:', error);
+        console.error("Erro ao enviar a mensagem:", error);
       }
 
-      setMessage('');
+      setMessage("");
     } else {
       console.error("Selecione um usuário antes de enviar uma mensagem."); // Mensagem de erro se não houver usuário selecionado
     }
@@ -108,45 +112,59 @@ const AdminChat = () => {
 
   // Filtra mensagens com base no usuário selecionado
   const filteredMessages = selectedUser
-    ? chat.filter(msg => msg.userID === selectedUser) // Filtra mensagens do usuário selecionado
-    : ''; // Mostra todas as mensagens se nenhum usuário estiver selecionado
+    ? chat.filter((msg) => msg.userID === selectedUser) // Filtra mensagens do usuário selecionado
+    : ""; // Mostra todas as mensagens se nenhum usuário estiver selecionado
 
   return (
     <div className={styles.Container}>
       {/* Coluna da esquerda */}
-      <div  className={styles.UsersList}>
+      <div className={styles.UsersList}>
         <h3>Usuários</h3>
-        {Array.from(new Set(chat.map(msg => msg.userID))).map((user, idx) => {
+        {Array.from(new Set(chat.map((msg) => msg.userID))).map((user, idx) => {
           // Encontre o primeiro nome correspondente ao userID
-          const userMsg = chat.find(msg => msg.userID === user);
-          const userName = userMsg ? userMsg.from : 'Usuário Desconhecido'; // Define um nome padrão caso não encontre
+          const userMsg = chat.find((msg) => msg.userID === user);
+          const userName = userMsg ? userMsg.from : "Usuário Desconhecido"; // Define um nome padrão caso não encontre
 
           return (
-            <div key={idx} onClick={() => handleUserClick(user)} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <div
+              key={idx}
+              onClick={() => handleUserClick(user)}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <AccountCircleIcon />
               <span>{userName}</span> {/* Use userName aqui */}
             </div>
           );
         })}
       </div>
-      
+
       {/* Coluna da direita */}
-      <div className={styles.messageContainer} >
-        <div  className={styles.messageContent}>
-          {Array.isArray(filteredMessages) && filteredMessages.map((msg, idx) => (
-            <div key={idx}>
-    <strong>{msg.from}:</strong> {msg.message} {msg.createdAt ? new Date(msg.createdAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }) : ''}
-    </div>
-          ))}
-             <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Digite sua mensagem..."
-        />
-        <button onClick={sendMessage}>Enviar</button>
+      <div className={styles.messageContainer}>
+        <div className={styles.messageContent}>
+          {Array.isArray(filteredMessages) &&
+            filteredMessages.map((msg, idx) => (
+              <div key={idx}>
+                <strong>{msg.from}:</strong> {msg.message}{" "}
+                {msg.createdAt
+                  ? new Date(msg.createdAt).toLocaleString("pt-BR", {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })
+                  : ""}
+              </div>
+            ))}
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Digite sua mensagem..."
+          />
+          <button onClick={sendMessage}>Enviar</button>
         </div>
-     
       </div>
     </div>
   );
