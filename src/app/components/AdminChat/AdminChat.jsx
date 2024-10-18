@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useConfig } from '../../../../context/ConfigContext';
 import axios from 'axios';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-
+import styles from './AdminChat.module.css'
 const socket = io('http://localhost:3002', {
   transports: ['websocket', 'polling'],
 });
@@ -112,9 +112,9 @@ const AdminChat = () => {
     : ''; // Mostra todas as mensagens se nenhum usuário estiver selecionado
 
   return (
-    <div style={{ display: 'flex', height: '500px', marginTop: "10rem" }}>
+    <div className={styles.Container}>
       {/* Coluna da esquerda */}
-      <div style={{ width: '30%', borderRight: '1px solid #ccc', overflowY: 'scroll' }}>
+      <div  className={styles.UsersList}>
         <h3>Usuários</h3>
         {Array.from(new Set(chat.map(msg => msg.userID))).map((user, idx) => {
           // Encontre o primeiro nome correspondente ao userID
@@ -131,9 +131,8 @@ const AdminChat = () => {
       </div>
       
       {/* Coluna da direita */}
-      <div style={{ width: '70%', padding: '10px', overflowY: 'scroll' }}>
-        <h2>Chat com Suporte</h2>
-        <div style={{ border: '1px solid #ccc', height: '240px', overflowY: 'scroll' }}>
+      <div className={styles.messageContainer} >
+        <div  className={styles.messageContent}>
           {Array.isArray(filteredMessages) && filteredMessages.map((msg, idx) => (
             <div key={idx}>
               <strong>{msg.from}:</strong> {msg.message}
