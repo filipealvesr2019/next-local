@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import { useConfig } from "../../../context/ConfigContext";
 import ChatIcon from "@mui/icons-material/Chat";
 import styles from "./ClientChat.module.css";
-import RemoveIcon from '@mui/icons-material/Remove';
+import RemoveIcon from "@mui/icons-material/Remove";
 
 const socket = io("http://localhost:3002", {
   transports: ["websocket", "polling"],
@@ -13,51 +13,76 @@ const socket = io("http://localhost:3002", {
 const ClientChat = ({ userName }) => {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
-  const storeID = Cookies.get("storeID"); // Obtenha o ID da loja do cookie
-  const userID = Cookies.get("UserID"); // Obtenha o ID do cliente do cookie
+  const storeID = Cookies.get("storeID");
+  const userID = Cookies.get("UserID");
   const { apiUrl } = useConfig();
   const [openChat, setOpenChat] = useState(false);
+  const [isSending, setIsSending] = useState(false); // Estado para controlar o envio
 
   useEffect(() => {
-    // Função para buscar mensagens do banco de dados
     const fetchMessages = async () => {
       try {
         const response = await fetch(
           `${apiUrl}/api/messages/${storeID}/user/${userID}`
         );
         const messages = await response.json();
-        setChat(messages);
+
+        const formattedMessages = messages.map((msg) => ({
+          from: msg.from || "Unknown",
+          message: msg.message || "",
+        }));
+
+        setChat(formattedMessages);
       } catch (error) {
-        console.error("Erro ao carregar mensagens:", error);
+        console.error("Error loading messages:", error);
       }
     };
 
-    // Buscar mensagens ao montar o componente
     fetchMessages();
 
-    // Receber mensagem do admin em tempo real
+    // Listen for messages from the admin
     socket.on("adminMessage", (adminMessage) => {
       setChat((prevChat) => [
         ...prevChat,
-        { from: "Admin", message: adminMessage },
+        { from: "Admin", message: adminMessage.message || "" },
       ]);
     });
 
-    // Limpar listener ao desmontar o componente
+    // Listen for messages from other clients (including current user)
+    socket.on("clientMessage", (clientMessage) => {
+      // Verifica se a mensagem já está no chat
+      if (
+        clientMessage.from !== userName &&
+        !chat.some((msg) => msg.message === clientMessage.message && msg.from === clientMessage.from)
+      ) {
+        setChat((prevChat) => [
+          ...prevChat,
+          { from: clientMessage.from, message: clientMessage.message },
+        ]);
+      }
+    });
+
     return () => {
       socket.off("adminMessage");
+      socket.off("clientMessage");
     };
-  }, [storeID, userID, apiUrl]);
+  }, [storeID, userID, apiUrl, userName, chat]); // Adicionando chat como dependência
 
   const sendMessage = async () => {
-    if (message.trim()) {
-      // Emitir a mensagem para o admin via socket
-      socket.emit("clientMessage", message);
+    if (message.trim() && !isSending) { // Adicionando controle para envio
+      setIsSending(true); // Desativa o botão de envio
+      socket.emit("clientMessage", {
+        from: userName,
+        message: message,
+      });
 
-      // Atualizar o estado do chat imediatamente no frontend
-      setChat((prevChat) => [...prevChat, { from: userName, message }]);
+      // Adiciona a mensagem do cliente ao chat localmente
+      setChat((prevChat) => [
+        ...prevChat,
+        { from: userName, message: message },
+      ]);
 
-      // Salvar a mensagem no banco de dados
+      // Salva a mensagem no banco de dados
       try {
         const response = await fetch(`${apiUrl}/api/messages`, {
           method: "POST",
@@ -65,7 +90,7 @@ const ClientChat = ({ userName }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: userName, 
+            from: userName,
             message: message,
             storeID: storeID,
             userID: userID,
@@ -73,14 +98,14 @@ const ClientChat = ({ userName }) => {
         });
 
         if (!response.ok) {
-          throw new Error("Erro ao salvar a mensagem");
+          throw new Error("Error saving message");
         }
       } catch (error) {
-        console.error("Erro ao enviar a mensagem:", error);
+        console.error("Error sending message:", error);
+      } finally {
+        setIsSending(false); // Reativa o botão de envio
+        setMessage(""); // Limpa o campo de entrada após enviar
       }
-
-      // Limpar campo de mensagem
-      setMessage("");
     }
   };
 
@@ -89,9 +114,12 @@ const ClientChat = ({ userName }) => {
       <div onClick={() => setOpenChat(!openChat)} className={styles.ChatIcon}>
         <ChatIcon />
       </div>
-      {openChat ? (
-        <div className={styles.ChatIcon}>
-          <RemoveIcon onClick={() => setOpenChat(!openChat)} style={{ marginTop: "25rem" }} />
+      {openChat && (
+        <div className={styles.ChatBox}>
+          <RemoveIcon
+            onClick={() => setOpenChat(!openChat)}
+            style={{ marginTop: "25rem" }}
+          />
           <div
             style={{
               border: "1px solid #ccc",
@@ -109,12 +137,10 @@ const ClientChat = ({ userName }) => {
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Digite sua mensagem..."
+            placeholder="Type your message..."
           />
-          <button onClick={sendMessage}>Enviar</button>
+          <button onClick={sendMessage} disabled={isSending}>Send</button> {/* Desativando o botão se estiver enviando */}
         </div>
-      ) : (
-        <></>
       )}
     </div>
   );

@@ -61,13 +61,24 @@ const AdminChat = () => {
     if (storeID) {
       fetchMessages();
     }
-
     socket.on("adminMessage", (adminMessage) => {
       if (selectedUser) {
-        setChat((prevChat) => [
-          ...prevChat,
-          { from: "Admin", message: adminMessage, userID: selectedUser, read: false },
-        ]);
+        setChat((prevChat) => {
+          // Evita mensagens duplicadas
+          const isDuplicate = prevChat.some(
+            (msg) =>
+              msg.message === adminMessage.message && msg.userID === adminMessage.userID
+          );
+          if (!isDuplicate) {
+            return [
+              ...prevChat,
+              { from: "Admin", message: adminMessage.message, userID: selectedUser, read: false },
+            ];
+          }
+          return prevChat;
+        });
+  
+        // Atualiza a contagem de não lidas
         setUnreadCounts((prev) => ({
           ...prev,
           [selectedUser]: (prev[selectedUser] || 0) + 1,
@@ -82,12 +93,16 @@ const AdminChat = () => {
 
   const sendMessage = async () => {
     if (message.trim() && selectedUser) {
-      const messageObject = { from: "You", message, userID: selectedUser };
-
-      socket.emit("clientMessage", message);
+      const messageObject = { from: "Você", message, userID: selectedUser };
+  
+      // Envia a mensagem pelo socket
+      socket.emit("clientMessage", { message, userID: selectedUser });
+  
+      // Atualiza o estado local
       setChat((prevChat) => [...prevChat, messageObject]);
-
+  
       try {
+        // Salva a mensagem no backend
         const response = await fetch(`${apiUrl}/api/messages`, {
           method: "POST",
           headers: {
@@ -101,19 +116,20 @@ const AdminChat = () => {
             read: false,
           }),
         });
-
+  
         if (!response.ok) {
           throw new Error("Erro ao salvar a mensagem");
         }
       } catch (error) {
         console.error("Erro ao enviar a mensagem:", error);
       }
-
+  
       setMessage("");
     } else {
       console.error("Selecione um usuário antes de enviar uma mensagem.");
     }
   };
+  
 
   const handleUserClick = async (user) => {
     setSelectedUser(user);
@@ -166,18 +182,19 @@ const AdminChat = () => {
 
       <div className={styles.messageContainer}>
         <div className={styles.messageContent}>
-          {Array.isArray(filteredMessages) &&
-            filteredMessages.map((msg, idx) => (
-              <div key={idx}>
-                <strong>{msg.from}:</strong> {msg.message}{" "}
-                {msg.createdAt
-                  ? new Date(msg.createdAt).toLocaleString("pt-BR", {
-                      dateStyle: "short",
-                      timeStyle: "short",
-                    })
-                  : ""}
-              </div>
-            ))}
+        {Array.isArray(filteredMessages) &&
+  filteredMessages.map((msg, idx) => (
+    <div key={idx}>
+      <strong>{msg.from}:</strong> {msg.message ? msg.message : 'Mensagem inválida'}{" "}
+      {msg.createdAt
+        ? new Date(msg.createdAt).toLocaleString("pt-BR", {
+            dateStyle: "short",
+            timeStyle: "short",
+          })
+        : ""}
+    </div>
+  ))}
+
           <input
             type="text"
             value={message}
