@@ -5,7 +5,6 @@ import { useConfig } from "../../../../context/ConfigContext";
 import axios from "axios";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import styles from "./AdminChat.module.css";
-
 const socket = io("http://localhost:3002", {
   transports: ["websocket", "polling"],
 });
@@ -18,7 +17,6 @@ const AdminChat = () => {
   const { apiUrl } = useConfig();
   const AdminID = Cookies.get("AdminID");
   const [storeID, setStoreID] = useState(null);
-  const [unreadCounts, setUnreadCounts] = useState({});
 
   useEffect(() => {
     const handleGetEcommerce = async () => {
@@ -43,15 +41,10 @@ const AdminChat = () => {
         const messages = await response.json();
         if (Array.isArray(messages)) {
           setChat(messages);
-          // Inicializa a contagem de mensagens não lidas para cada usuário
-          const counts = messages.reduce((acc, msg) => {
-            acc[msg.userID] = (acc[msg.userID] || 0) + (msg.read ? 0 : 1);
-            return acc;
-          }, {});
-          setUnreadCounts(counts);
+          console.log("messages", messages);
         } else {
           console.error("A resposta não é um array:", messages);
-          setChat([]);
+          setChat([]); // Se não for um array, defina chat como um array vazio
         }
       } catch (error) {
         console.error("Erro ao carregar mensagens:", error);
@@ -63,29 +56,28 @@ const AdminChat = () => {
     }
 
     socket.on("adminMessage", (adminMessage) => {
+      // Quando uma nova mensagem do admin chega, verifique se é para o usuário selecionado
       if (selectedUser) {
         setChat((prevChat) => [
           ...prevChat,
-          { from: "Admin", message: adminMessage, userID: selectedUser, read: false },
+          { from: "Admin", message: adminMessage, userID: selectedUser },
         ]);
-        setUnreadCounts((prev) => ({
-          ...prev,
-          [selectedUser]: (prev[selectedUser] || 0) + 1,
-        }));
       }
     });
 
     return () => {
       socket.off("adminMessage");
     };
-  }, [storeID, selectedUser]);
+  }, [storeID, selectedUser]); // Adiciona selectedUser como dependência
 
   const sendMessage = async () => {
     if (message.trim() && selectedUser) {
+      // Verifica se um usuário está selecionado
       const messageObject = { from: "You", message, userID: selectedUser };
 
-      socket.emit("clientMessage", message);
-      setChat((prevChat) => [...prevChat, messageObject]);
+      // Envia a mensagem pelo socket
+      socket.emit("clientMessage", message); // Envia mensagem pelo socket
+      setChat((prevChat) => [...prevChat, messageObject]); // Adiciona a mensagem ao chat
 
       try {
         const response = await fetch(`${apiUrl}/api/messages`, {
@@ -95,10 +87,9 @@ const AdminChat = () => {
           },
           body: JSON.stringify({
             from: "admin",
-            message,
-            storeID,
-            userID: selectedUser,
-            read: false,
+            message: message,
+            storeID: storeID,
+            userID: selectedUser, // Usa o selectedUser para associar a mensagem
           }),
         });
 
@@ -111,59 +102,47 @@ const AdminChat = () => {
 
       setMessage("");
     } else {
-      console.error("Selecione um usuário antes de enviar uma mensagem.");
+      console.error("Selecione um usuário antes de enviar uma mensagem."); // Mensagem de erro se não houver usuário selecionado
     }
   };
 
-  const handleUserClick = async (user) => {
+  const handleUserClick = (user) => {
     setSelectedUser(user);
-
-    try {
-      const response = await axios.patch(`${apiUrl}/api/messages/read/${user}/${storeID}`);
-      const { unreadCount } = response.data;
-
-      // Marque as mensagens como lidas no estado local
-      setChat((prevChat) =>
-        prevChat.map((msg) =>
-          msg.userID === user ? { ...msg, read: true } : msg
-        )
-      );
-
-      // Atualiza a contagem de mensagens não lidas
-      setUnreadCounts((prev) => ({ ...prev, [user]: unreadCount }));
-    } catch (error) {
-      console.error("Erro ao atualizar mensagens:", error);
-    }
   };
 
+  // Filtra mensagens com base no usuário selecionado
   const filteredMessages = selectedUser
-    ? chat.filter((msg) => msg.userID === selectedUser)
-    : [];
+    ? chat.filter((msg) => msg.userID === selectedUser) // Filtra mensagens do usuário selecionado
+    : ""; // Mostra todas as mensagens se nenhum usuário estiver selecionado
 
   return (
     <div className={styles.Container}>
+      {/* Coluna da esquerda */}
       <div className={styles.UsersList}>
         <h3>Usuários</h3>
         {Array.from(new Set(chat.map((msg) => msg.userID))).map((user, idx) => {
+          // Encontre o primeiro nome correspondente ao userID
           const userMsg = chat.find((msg) => msg.userID === user);
-          const userName = userMsg ? userMsg.from : "Usuário Desconhecido";
-          const unreadCount = unreadCounts[user] || 0;
+          const userName = userMsg ? userMsg.from : "Usuário Desconhecido"; // Define um nome padrão caso não encontre
 
           return (
             <div
               key={idx}
               onClick={() => handleUserClick(user)}
-              style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+              }}
             >
               <AccountCircleIcon />
-              <span>
-                {userName} {unreadCount > 0 && `(${unreadCount})`}
-              </span>
+              <span>{userName}</span> {/* Use userName aqui */}
             </div>
           );
         })}
       </div>
 
+      {/* Coluna da direita */}
       <div className={styles.messageContainer}>
         <div className={styles.messageContent}>
           {Array.isArray(filteredMessages) &&
