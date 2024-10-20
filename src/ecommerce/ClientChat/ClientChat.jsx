@@ -5,6 +5,7 @@ import { useConfig } from "../../../context/ConfigContext";
 import ChatIcon from "@mui/icons-material/Chat";
 import styles from "./ClientChat.module.css";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useChat } from "../../../context/ChatContext";
 
 const socket = io("http://localhost:3002", {
   transports: ["websocket", "polling"],
@@ -18,6 +19,7 @@ const ClientChat = ({ userName }) => {
   const { apiUrl } = useConfig();
   const [openChat, setOpenChat] = useState(false);
   const [isSending, setIsSending] = useState(false); // Estado para controlar o envio
+  const { fetchMessages } = useChat(); // Usando o contexto
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -100,6 +102,8 @@ const ClientChat = ({ userName }) => {
         if (!response.ok) {
           throw new Error("Error saving message");
         }
+        fetchMessages(); // Chama a função fetchMessages do contexto
+
       } catch (error) {
         console.error("Error sending message:", error);
       } finally {

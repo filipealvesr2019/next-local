@@ -9,6 +9,7 @@ import {
   createTheme,
 } from "@mui/material/styles";
 import UserAuthProvider from "@/ecommerce/context/UserAuthProvider";
+import { MessageProvider } from "../../context/ChatContext";
 
 // Exemplo de tema
 const theme = createTheme({
@@ -31,7 +32,10 @@ export default function RootLayout({ children }) {
             <ChakraProvider>
               <ConfigProvider>
                 <UserAuthProvider>
+                <MessageProvider>
+
                   <AdminAuthProvider>{children}</AdminAuthProvider>
+                </MessageProvider>
                 </UserAuthProvider>
               </ConfigProvider>
             </ChakraProvider>

@@ -5,6 +5,7 @@ import { useConfig } from "../../../../context/ConfigContext";
 import axios from "axios";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import styles from "./AdminChat.module.css";
+import { useChat } from "../../../../context/ChatContext";
 
 const socket = io("http://localhost:3002", {
   transports: ["websocket", "polling"],
@@ -19,6 +20,7 @@ const AdminChat = () => {
   const AdminID = Cookies.get("AdminID");
   const [storeID, setStoreID] = useState(null);
   const [unreadCounts, setUnreadCounts] = useState({});
+  const { setFetchMessages } = useChat(); // Usando o contexto
 
   useEffect(() => {
     const handleGetEcommerce = async () => {
@@ -49,6 +51,8 @@ const AdminChat = () => {
             return acc;
           }, {});
           setUnreadCounts(counts);
+          setFetchMessages(fetchMessages); // Atualiza a função fetchMessages no contexto
+
         } else {
           console.error("A resposta não é um array:", messages);
           setChat([]);
