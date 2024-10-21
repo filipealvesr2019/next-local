@@ -133,7 +133,7 @@ const ClientChat = ({ userName }) => {
           >
             {chat.map((msg, idx) => (
               <div key={idx}>
-                <strong>{msg.from}:</strong> {msg.message}
+                <strong>{msg.attendant ? msg.attendant : msg.from}:</strong> {msg.message}
               </div>
             ))}
           </div>

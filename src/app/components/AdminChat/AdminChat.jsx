@@ -37,7 +37,6 @@ const AdminChat = () => {
       handleGetEcommerce();
     }
   }, [AdminID]);
-
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -45,14 +44,15 @@ const AdminChat = () => {
         const messages = await response.json();
         if (Array.isArray(messages)) {
           setChat(messages);
-          // Inicializa a contagem de mensagens não lidas para cada usuário
+          // Inicializa a contagem de mensagens não lidas apenas para mensagens do cliente
           const counts = messages.reduce((acc, msg) => {
-            acc[msg.userID] = (acc[msg.userID] || 0) + (msg.read ? 0 : 1);
+            if (msg.from !== "admin") {  // Conta apenas as mensagens não enviadas pelo admin
+              acc[msg.userID] = (acc[msg.userID] || 0) + (msg.read ? 0 : 1);
+            }
             return acc;
           }, {});
           setUnreadCounts(counts);
           setFetchMessages(fetchMessages); // Atualiza a função fetchMessages no contexto
-
         } else {
           console.error("A resposta não é um array:", messages);
           setChat([]);
@@ -61,7 +61,7 @@ const AdminChat = () => {
         console.error("Erro ao carregar mensagens:", error);
       }
     };
-
+  
     if (storeID) {
       fetchMessages();
     }
@@ -82,18 +82,15 @@ const AdminChat = () => {
           return prevChat;
         });
   
-        // Atualiza a contagem de não lidas
-        setUnreadCounts((prev) => ({
-          ...prev,
-          [selectedUser]: (prev[selectedUser] || 0) + 1,
-        }));
+        // As mensagens enviadas pelo admin não atualizam a contagem de não lidas
       }
     });
-
+  
     return () => {
       socket.off("adminMessage");
     };
   }, [storeID, selectedUser]);
+  
 
   const sendMessage = async () => {
     if (message.trim() && selectedUser) {
@@ -113,6 +110,7 @@ const AdminChat = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            attendant: `maria (atendente)`,
             from: "admin",
             message,
             storeID,
