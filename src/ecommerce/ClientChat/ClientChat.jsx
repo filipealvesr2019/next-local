@@ -32,6 +32,7 @@ const ClientChat = ({ userName }) => {
         const formattedMessages = messages.map((msg) => ({
           from: msg.from || "Unknown",
           message: msg.message || "",
+          attendant: msg.attendant
         }));
 
         setChat(formattedMessages);
