@@ -133,7 +133,7 @@ const ClientChat = ({ userName }) => {
             }}
           >
             {chat.map((msg, idx) => (
-              <div key={idx}>
+              <div key={idx} className={msg.from != 'admin' ? styles.user : styles.admin }>
                 <strong>{msg.attendant ? msg.attendant : msg.from}:</strong> {msg.message}
               </div>
             ))}

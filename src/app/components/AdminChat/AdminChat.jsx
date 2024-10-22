@@ -46,7 +46,8 @@ const AdminChat = () => {
           setChat(messages);
           // Inicializa a contagem de mensagens não lidas apenas para mensagens do cliente
           const counts = messages.reduce((acc, msg) => {
-            if (msg.from !== "admin") {  // Conta apenas as mensagens não enviadas pelo admin
+            if (msg.from !== "admin") {
+              // Conta apenas as mensagens não enviadas pelo admin
               acc[msg.userID] = (acc[msg.userID] || 0) + (msg.read ? 0 : 1);
             }
             return acc;
@@ -61,7 +62,7 @@ const AdminChat = () => {
         console.error("Erro ao carregar mensagens:", error);
       }
     };
-  
+
     if (storeID) {
       fetchMessages();
     }
@@ -71,37 +72,42 @@ const AdminChat = () => {
           // Evita mensagens duplicadas
           const isDuplicate = prevChat.some(
             (msg) =>
-              msg.message === adminMessage.message && msg.userID === adminMessage.userID
+              msg.message === adminMessage.message &&
+              msg.userID === adminMessage.userID
           );
           if (!isDuplicate) {
             return [
               ...prevChat,
-              { from: "Admin", message: adminMessage.message, userID: selectedUser, read: false },
+              {
+                from: "Admin",
+                message: adminMessage.message,
+                userID: selectedUser,
+                read: false,
+              },
             ];
           }
           return prevChat;
         });
-  
+
         // As mensagens enviadas pelo admin não atualizam a contagem de não lidas
       }
     });
-  
+
     return () => {
       socket.off("adminMessage");
     };
   }, [storeID, selectedUser]);
-  
 
   const sendMessage = async () => {
     if (message.trim() && selectedUser) {
       const messageObject = { from: "Você", message, userID: selectedUser };
-  
+
       // Envia a mensagem pelo socket
       socket.emit("clientMessage", { message, userID: selectedUser });
-  
+
       // Atualiza o estado local
       setChat((prevChat) => [...prevChat, messageObject]);
-  
+
       try {
         // Salva a mensagem no backend
         const response = await fetch(`${apiUrl}/api/messages`, {
@@ -118,26 +124,27 @@ const AdminChat = () => {
             read: false,
           }),
         });
-  
+
         if (!response.ok) {
           throw new Error("Erro ao salvar a mensagem");
         }
       } catch (error) {
         console.error("Erro ao enviar a mensagem:", error);
       }
-  
+
       setMessage("");
     } else {
       console.error("Selecione um usuário antes de enviar uma mensagem.");
     }
   };
-  
 
   const handleUserClick = async (user) => {
     setSelectedUser(user);
 
     try {
-      const response = await axios.patch(`${apiUrl}/api/messages/read/${user}/${storeID}`);
+      const response = await axios.patch(
+        `${apiUrl}/api/messages/read/${user}/${storeID}`
+      );
       const { unreadCount } = response.data;
 
       // Marque as mensagens como lidas no estado local
@@ -171,7 +178,11 @@ const AdminChat = () => {
             <div
               key={idx}
               onClick={() => handleUserClick(user)}
-              style={{ cursor: "pointer", display: "flex", alignItems: "center" }}
+              style={{
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+              }}
             >
               <AccountCircleIcon />
               <span>
@@ -184,18 +195,19 @@ const AdminChat = () => {
 
       <div className={styles.messageContainer}>
         <div className={styles.messageContent}>
-        {Array.isArray(filteredMessages) &&
-  filteredMessages.map((msg, idx) => (
-    <div key={idx}>
-      <strong>{msg.from}:</strong> {msg.message ? msg.message : 'Mensagem inválida'}{" "}
-      {msg.createdAt
-        ? new Date(msg.createdAt).toLocaleString("pt-BR", {
-            dateStyle: "short",
-            timeStyle: "short",
-          })
-        : ""}
-    </div>
-  ))}
+          {Array.isArray(filteredMessages) &&
+            filteredMessages.map((msg, idx) => (
+              <div key={idx} className={msg.from != 'admin' ? styles.user : styles.admin }>
+                <strong>{msg.from}:</strong>{" "}
+                {msg.message ? msg.message : "Mensagem inválida"}{" "}
+                {msg.createdAt
+                  ? new Date(msg.createdAt).toLocaleString("pt-BR", {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })
+                  : ""}
+              </div>
+            ))}
 
           <input
             type="text"

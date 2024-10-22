@@ -15,7 +15,7 @@ width: 70vw;
 
   .messageContainer{
     border-radius: 100px;
-    width: 30vw;
+    width: 40vw;
   }
   .messageContent{
     background-color: #fff;
@@ -26,3 +26,12 @@ width: 70vw;
 
   }
   
+  .admin{
+    background-color: #5786FE;
+    color: white;
+    
+  }
+
+  .user{
+    background-color: #FAFAFA;
+  }
