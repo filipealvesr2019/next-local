@@ -21,6 +21,7 @@ import Bairros from "../components/Bairros/Bairros";
 import Horario from "../components/Horario/Horario";
 import AlarmSoundsPage from "../../app/components/alarm/AlarmSoundsPage/AlarmSoundsPage";
 import AdminChat from "../components/AdminChat/AdminChat";
+import Configuracoes from "../components/configuracoes/Configuracoes";
 
 const HomeIcon = () => (
   <svg className={styles.icon} viewBox="0 0 20 20" fill="currentColor">
@@ -148,6 +149,8 @@ const Sidebar = () => {
                 </Link>
                 
                 <span className={styles.span}>Configurar Pagamento</span>
+
+                Configuracoes
               </div>
             </div>
           )}
@@ -167,18 +170,12 @@ const Sidebar = () => {
           </Flex>
           <Flex
             className={styles.sidebarItem}
-            onClick={() => setContent("Bairros")}
+            onClick={() => setContent("Configuracoes")}
           >
             <SettingsIcon />
-            <Text className={styles.itemText}>Bairros</Text>
+            <Text className={styles.itemText}>Configuracoes</Text>
           </Flex>
-          <Flex
-            className={styles.sidebarItem}
-            onClick={() => setContent("Horario")}
-          >
-            <SettingsIcon />
-            <Text className={styles.itemText}>Horario</Text>
-          </Flex>
+        
           {/* <Flex
             className={styles.sidebarItem}
             onClick={() => setContent("alarme")}
@@ -186,13 +183,7 @@ const Sidebar = () => {
             <SettingsIcon />
             <Text className={styles.itemText}>alarme</Text>
           </Flex> */}
-          <Flex
-            className={styles.sidebarItem}
-            onClick={() => setContent("chat")}
-          >
-            <SettingsIcon />
-            <Text className={styles.itemText}>chat</Text>
-          </Flex>
+         
           <Button
             className={styles.sidebarItem}
             onClick={logout}
@@ -213,11 +204,9 @@ const Sidebar = () => {
           {/* {content === "Email" && <Email />} */}
           {content === "Finaceiro" && <Finaceiro />}
           {content === "Relatório" && <Finaceiro />}
-          {content === "Bairros" && <Bairros />}
-          {content === "Horario" && <Horario />}
-          {/* {content === "alarme" && <AlarmSoundsPage />} */}
-          {content === "chat" && <AdminChat />}
+          {content === "Configuracoes" && <Configuracoes />}
 
+          
 
           
            
