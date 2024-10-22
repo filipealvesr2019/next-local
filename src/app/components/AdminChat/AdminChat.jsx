@@ -185,9 +185,14 @@ const AdminChat = () => {
               }}
             >
               <AccountCircleIcon />
-              <span>
-                {userName} {unreadCount > 0 && `(${unreadCount})`}
-              </span>
+              <div >
+                {userName} 
+                
+                <span className={unreadCount > 0 ? styles.span :  ''}>
+
+                {unreadCount > 0 && `${unreadCount}`}
+                </span>
+              </div>
             </div>
           );
         })}

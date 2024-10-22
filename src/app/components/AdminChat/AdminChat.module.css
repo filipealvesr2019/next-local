@@ -35,3 +35,15 @@ width: 70vw;
     background-color: #F6F8FD;
     color: #2e3655;
   }
+
+  .span {
+    background-color: #5679f4;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 50%;
+    width: 40px; /* Largura fixa */
+    height: 40px; /* Altura fixa */
+    display: flex; /* Adicionado para centralizar texto se necessário */
+    justify-content: center; /* Centraliza o conteúdo horizontalmente */
+    align-items: center; /* Centraliza o conteúdo verticalmente */
+}
