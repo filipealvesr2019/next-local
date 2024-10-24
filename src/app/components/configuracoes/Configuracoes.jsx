@@ -10,6 +10,7 @@ import {
 import Bairros from "../Bairros/Bairros";
 import Horario from "../Horario/Horario";
 import AdminChat from "../AdminChat/AdminChat";
+import Clients from "../Clients/Clients";
   export default function Configuracoes() {
     return (
       <>
@@ -48,7 +49,14 @@ import AdminChat from "../AdminChat/AdminChat";
                 Chat
               </Tab>
             
-              
+              <Tab
+                style={{
+                  fontWeight: "600",
+                  fontSize: "1.2rem",
+                }}
+              >
+                Cadastro atendentes
+              </Tab>
             </TabList>
             <TabIndicator
               mt="-1.5px"
@@ -69,7 +77,11 @@ import AdminChat from "../AdminChat/AdminChat";
   
               </TabPanel>
             
-              
+              <TabPanel>
+              <Clients />
+  
+              </TabPanel>
+            
             </TabPanels>
           </Tabs>
         </div>
