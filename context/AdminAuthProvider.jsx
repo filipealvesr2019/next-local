@@ -1,76 +1,137 @@
-"use client"
-import React, { useEffect } from 'react';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useAtom } from 'jotai';
-import { isAdminAtom, loggedInAtom, authErrorAtom, AdminIDAtom } from '../store/store'; // Adicione o customerIDAtom
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+"use client";
+import React, { useEffect } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useAtom } from "jotai";
+import {
+  isAdminAtom,
+  loggedInAtom,
+  authErrorAtom,
+  AdminIDAtom,
+  isAttendantAtom,
+  AttendantIDAtom,
+} from "../store/store"; // Adicione o customerIDAtom
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const AdminAuthProvider  = ({ children }) => {
+const AdminAuthProvider = ({ children }) => {
   const [loggedIn, setLoggedIn] = useAtom(loggedInAtom);
   const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
-  const [adminID, setAdminID] = useAtom(AdminIDAtom); // Adicione o estado para customerID
+  const [adminID, setAdminID] = useAtom(AdminIDAtom); // Estado do Admin
+  const [isAttendant, setIsAttendant] = useAtom(isAttendantAtom);
+  const [attendantID, setAttendantID] = useAtom(AttendantIDAtom); // Estado do Atendente
 
   useEffect(() => {
-    const storedToken = Cookies.get('AdminToken');  // Use AdminToken
-    const storedRole = Cookies.get('AdminRole');    // Use AdminRole
-    const storedAdminID= Cookies.get('AdminID');
+    const storedAdminToken = Cookies.get("AdminToken");
+    const storedAdminRole = Cookies.get("AdminRole");
+    const storedAdminID = Cookies.get("AdminID");
   
-    setLoggedIn(Boolean(storedToken));
-    setIsAdmin(storedRole === 'administrador');
-    setAdminID(storedAdminID);
-  }, [setLoggedIn, setIsAdmin, setAdminID]);
+    const storedAttendantToken = Cookies.get("AttendantToken");
+    const storedAttendantRole = Cookies.get("AttendantRole");
+    const storedAttendantID = Cookies.get("AttendantID");
   
-
+    // Logs para depuração
+    console.log("AdminToken: ", storedAdminToken);
+    console.log("AdminRole: ", storedAdminRole);
+    console.log("AttendantToken: ", storedAttendantToken);
+  
+    // Autenticação de Admin
+    if (storedAdminToken && storedAdminRole === "administrador") {
+      setLoggedIn(true);
+      setIsAdmin(true);
+      setAdminID(storedAdminID);
+    } else {
+      console.log("Admin not authenticated.");
+    }
+  
+    // Autenticação de Atendente
+    if (storedAttendantToken && storedAttendantRole === "atendente") {
+      setLoggedIn(true);
+      setIsAttendant(true);
+      setAttendantID(storedAttendantID);
+    } else {
+      console.log("Attendant not authenticated.");
+    }
+  }, [setLoggedIn, setIsAdmin, setAdminID, setIsAttendant, setAttendantID]);
+  
   return <>{children}</>;
 };
 
-export default AdminAuthProvider ;
+export default AdminAuthProvider;
 
 export const adminAuth = () => {
   const [loggedIn, setLoggedIn] = useAtom(loggedInAtom);
   const [isAdmin, setIsAdmin] = useAtom(isAdminAtom);
-  const [adminID, setAdminID] = useAtom(AdminIDAtom); // Adicione o estado para customerID
+  const [adminID, setAdminID] = useAtom(AdminIDAtom);
+  const [isAttendant, setIsAttendant] = useAtom(isAttendantAtom);
+  const [attendantID, setAttendantID] = useAtom(AttendantIDAtom);
   const [error, setError] = useAtom(authErrorAtom);
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3002/api/login', { email, password });
+      const response = await axios.post("http://localhost:3002/api/login", {
+        email,
+        password,
+      });
 
-      if (response.data.user.role === 'administrador') {
+      const { role, _id, token } = response.data.user;
+
+      if (role === "administrador") {
         setLoggedIn(true);
         setIsAdmin(true);
+        setAdminID(_id);
+        Cookies.set("AdminToken", token);
+        Cookies.set("AdminRole", role);
+        Cookies.set("AdminID", _id);
+      } else if (role === "atendente") {
+        setLoggedIn(true);
+        setIsAttendant(true);
+        setAttendantID(_id);
+        Cookies.set("AttendantToken", token);
+        Cookies.set("AttendantRole", role);
+        Cookies.set("AttendantID", _id);
       } else {
-        alert('Credenciais inválidas');
+        alert("Credenciais inválidas");
       }
-
-      Cookies.set('AdminToken', response.data.token);
-      Cookies.set('AdminRole', response.data.user.role);
-      Cookies.set('AdminID', response.data.user._id);
-      setAdminID(response.data.user._id);
-      
-      console.log(adminID)
     } catch (error) {
       setError(error.response.data.error);
 
       if (error.response && error.response.status === 401) {
-        toast.error('Erro, email ou senha inválidos!', { position: 'top-center' });
+        toast.error("Erro, email ou senha inválidos!", {
+          position: "top-center",
+        });
       } else {
-        console.error('Erro na solicitação de login', error);
+        console.error("Erro na solicitação de login", error);
       }
     }
   };
 
   const logout = () => {
-    Cookies.remove('AdminToken');
-    Cookies.remove('AdminRole');
-    Cookies.remove('AdminID');
-    
-    setLoggedIn(false);
+    // Limpeza dos cookies e estados de admin
+    Cookies.remove("AdminToken");
+    Cookies.remove("AdminRole");
+    Cookies.remove("AdminID");
     setIsAdmin(false);
-    setAdminID(null); // Limpe o estado do customerID
+    setAdminID(null);
+
+    // Limpeza dos cookies e estados de atendente
+    Cookies.remove("AttendantToken");
+    Cookies.remove("AttendantRole");
+    Cookies.remove("AttendantID");
+    setIsAttendant(false);
+    setAttendantID(null);
+
+    setLoggedIn(false);
   };
 
-  return { loggedIn, isAdmin, setAdminID, login, logout, error }; // Retorne o customerID
+  return {
+    loggedIn,
+    isAdmin,
+    adminID,
+    isAttendant,
+    attendantID,
+    login,
+    logout,
+    error,
+  };
 };

@@ -5,7 +5,11 @@ import Cookies from 'js-cookie';
 
 export const loggedInAtom = atom(Boolean(Cookies.get('token')));
 export const isAdminAtom = atom(Cookies.get('role') === 'administrador');
+export const isAttendantAtom = atom(Cookies.get('role') === 'atendente');
+
 export const AdminIDAtom = atom(null); // Defina o AdminIDAtom
+export const AttendantIDAtom = atom(null); // Defina o AttendantIDAtom
+
 
 export const loggedInCustomerAtom = atom(Boolean(Cookies.get('token')));
 export const isCustomerAtom = atom(Cookies.get('role') === 'User');

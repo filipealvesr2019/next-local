@@ -7,9 +7,10 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { adminAuth } from "../../../context/AdminAuthProvider";
 import AdminPage from "../AdminPage/AdminPage";
+import Attendant from "../Attendant/Attendant";
 
 const Login = () => {
-  const { loggedIn, isAdmin, login, logout, error } = adminAuth();
+  const { loggedIn, isAdmin, isAttendant,  login, logout, error } = adminAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [formErrors, setFormErrors] = useState({});
@@ -39,7 +40,7 @@ const Login = () => {
   if (loggedIn) {
     return (
       <div className="logout-container">
-        {isAdmin ? <AdminPage /> : ""}
+        {isAdmin ? <AdminPage /> : <Attendant />}
         <div className="button" onClick={logout}>
           <LogoutIcon />
           <span>Sair</span>
